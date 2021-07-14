@@ -17,7 +17,7 @@ import static de.kairos.fhir.centraxx.metamodel.RootEntities.studyVisitItem
  */
 immunization {
   final def studyCode = context.source[studyVisitItem().studyMember().study().code()]
-  if (studyCode != "SARS-Cov-2") {
+  if (studyCode != "GECCO FINAL") {
     return //no export
   }
 

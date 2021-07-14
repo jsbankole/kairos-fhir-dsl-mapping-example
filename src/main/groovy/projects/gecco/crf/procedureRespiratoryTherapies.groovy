@@ -16,7 +16,7 @@ import static de.kairos.fhir.centraxx.metamodel.RootEntities.studyVisitItem
  */
 procedure {
   final def studyCode = context.source[studyVisitItem().studyMember().study().code()]
-  if (studyCode != "SARS-Cov-2") {
+  if (studyCode != "GECCO FINAL") {
     return //no export
   }
   final def crfName = context.source[studyVisitItem().template().crfTemplate().name()]
