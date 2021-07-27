@@ -7,6 +7,9 @@ import de.kairos.fhir.centraxx.metamodel.SampleIdContainer
 import de.kairos.fhir.centraxx.metamodel.enums.SampleCategory
 import de.kairos.fhir.centraxx.metamodel.enums.SampleKind
 
+import java.text.SimpleDateFormat
+import java.util.concurrent.TimeUnit
+
 import static de.kairos.fhir.centraxx.metamodel.RootEntities.sample
 
 /**
@@ -19,14 +22,18 @@ import static de.kairos.fhir.centraxx.metamodel.RootEntities.sample
  * Hints:
  * 1. Filter: only master samples, derived samples and aliquot groups are allowed to export.
  * 2. Filter: Only samples of the OrgUnit P-2216-NAP are exported.
- * 3. Mapping: postcenrtifugationdate (Einfrierzeitpunkt HUB) to firstrepositiondate (Einfrierzeitpunkt DZHK)
+ * 3. Mapping: postcentrifugationdate (Einfrierzeitpunkt HUB) to firstrepositiondate (Einfrierzeitpunkt DZHK)
  * 4. Mapping OrgUnit: P-2216-NAP (HUB) to "NUM_Hannover" (DZHK) TODO: verify codes
- * 5. Mapping IDs: EXTSAMPLEID (HUB) to SAMPLEID (DZHK) TODO: Turn around for reverse sync
+ * 5. Mapping IDs: EXTSAMPLEID (HUB) to SAMPLEID (DZHK)
  * 6. Filter: Link only LaborMethod "DZHKFLAB" NUM WF3 -> see observation.groovy
- *
  * TODO: 7. Check mapping of the sample type.
+ * 8. Filter samples that were created not longer than 3 days ago.
  */
 specimen {
+  // 8. CreationDate Filter
+  if (isMoreThanNDaysAgo(context.source[sample().creationDate()] as String, 3)) {
+    return
+  }
 
   // 1. Filter sample category
   final SampleCategory category = context.source[sample().sampleCategory()] as SampleCategory
@@ -42,38 +49,42 @@ specimen {
 
   id = "Specimen/" + context.source[sample().id()]
 
-  final def externalSampleIdContainer = context.source[sample().idContainer()]?.find { final def entry ->
-    "EXTSAMPLEID" == entry[SampleIdContainer.ID_CONTAINER_TYPE]?.getAt(IdContainerType.CODE)
-  }
+  final def idContainerCodeMap = ["SAMPLEID": "EXTSAMPLEID", "EXTSAMPLEID": "SAMPLEID"]
+  final Map<String, Object> idContainersMap = idContainerCodeMap.collectEntries { String idContainerCode, String _ ->
+    return [
+        (idContainerCode): context.source[sample().idContainer()]?.find { final def entry ->
+          idContainerCode == entry[SampleIdContainer.ID_CONTAINER_TYPE]?.getAt(IdContainerType.CODE)
+        }
+    ]
+  } as Map<String, Object>
 
-  final def sampleIdContainer = context.source[sample().idContainer()]?.find { final def entry ->
-    "SAMPLEID" == entry[SampleIdContainer.ID_CONTAINER_TYPE]?.getAt(IdContainerType.CODE)
-  }
-
-  // 5: cross-mapping of the ids
-  if (externalSampleIdContainer) {
-    identifier {
-      type {
-        coding {
-          system = "urn:centraxx"
-          code = "SAMPLEID"
-          display = "Proben ID"
+  // 5: cross-mapping of the ids of MASTER samples. The sample id of the HUB is provided as external sampled id to DZHK.
+  // The external sample id of HUB is provided as sample id to DZHK.
+  if (context.source[sample().sampleCategory()] as SampleCategory == SampleCategory.MASTER) {
+    idContainersMap.each { final String idContainerCode, final Object idContainer ->
+      if (idContainer) {
+        identifier {
+          type {
+            coding {
+              system = "urn:centraxx"
+              code = idContainerCodeMap[idContainerCode]
+            }
+          }
+          value = idContainer[SampleIdContainer.PSN]
         }
       }
-      value = externalSampleIdContainer?.getAt(SampleIdContainer.PSN)
     }
-  }
-
-  if (sampleIdContainer) {
-    identifier {
-      type {
-        coding {
-          system = "urn:centraxx"
-          code = "EXTSAMPLEID"
-          display = "Externe Proben ID"
+  } else { // Providing HUB sample id as sample id to DZHK.
+    if (idContainersMap["SAMPLEID"]) {
+      identifier {
+        type {
+          coding {
+            system = "urn:centraxx"
+            code = "SAMPLEID"
+          }
         }
+        value = idContainersMap["SAMPLEID"][SampleIdContainer.PSN]
       }
-      value = sampleIdContainer?.getAt(SampleIdContainer.PSN)
     }
   }
 
@@ -106,12 +117,20 @@ specimen {
     }
   }
 
+  // TODO: Mapping of the derival date
+  if (context.source[sample().derivalDate()]) {
+    extension {
+      url = FhirUrls.Extension.Sample.DERIVAL_DATE
+      valueDateTime = context.source[sample().derivalDate().date()]
+    }
+  }
+
   status = context.source[sample().restAmount().amount()] > 0 ? "available" : "unavailable"
 
   type {
     coding {
       system = "urn:centraxx"
-      code = toNumType(context.source[sample().sampleType().code()])
+      code = toDzhkType(context.source[sample().sampleType().code()])
     }
   }
 
@@ -136,15 +155,15 @@ specimen {
   if (context.source[sample().parent()] != null) {
     parent {
       // Reference by identifier SampleId, because parent MasterSample might already exists in the target system
-      if (SampleCategory.MASTER == context.source[sample().parent().sampleCategory()] as SampleCategory) {
+      final def extSampleIdParent = context.source[sample().parent().idContainer()]?.find { final def entry ->
+        "EXTSAMPLEID" == entry[SampleIdContainer.ID_CONTAINER_TYPE]?.getAt(IdContainerType.CODE)
+      }
+      if (SampleCategory.MASTER == context.source[sample().parent().sampleCategory()] as SampleCategory && extSampleIdParent) {
         identifier {
           type {
             coding {
-              code = "EXTSAMPLEID"
+              code = "SAMPLEID"
             }
-          }
-          final def extSampleIdParent = context.source[sample().parent().idContainer()]?.find { final def entry ->
-            "SAMPLEID" == entry[SampleIdContainer.ID_CONTAINER_TYPE]?.getAt(IdContainerType.CODE)
           }
           value = extSampleIdParent[SampleIdContainer.PSN]
         }
@@ -187,7 +206,7 @@ specimen {
   container {
     if (context.source[sample().receptable()]) {
       identifier {
-        value = context.source[sample().receptable().code()]
+        value = toDzhkContainer(context.source[sample().receptable().code()])
         system = "urn:centraxx"
       }
 
@@ -323,7 +342,7 @@ specimen {
           url = FhirUrls.Extension.Sprec.SPREC_POST_CENTRIFUGATION_DELAY
           valueCoding {
             system = "urn:centraxx"
-            code = context.source[sample().sprecPostCentrifugationDelay()]
+            code = context.source[sample().sprecPostCentrifugationDelay().code()]
           }
         }
       }
@@ -338,7 +357,7 @@ specimen {
           url = FhirUrls.Extension.Sprec.STOCK_PROCESSING
           valueCoding {
             system = "urn:centraxx"
-            code = toNUMProcessing(context.source[sample().stockProcessing().code()] as String)
+            code = toDzhkProcessing(context.source[sample().stockProcessing().code()] as String)
           }
         }
       }
@@ -353,7 +372,7 @@ specimen {
           url = FhirUrls.Extension.Sprec.SECOND_PROCESSING
           valueCoding {
             system = "urn:centraxx"
-            code = toNUMProcessing(context.source[sample().secondProcessing().code()] as String)
+            code = toDzhkProcessing(context.source[sample().secondProcessing().code()] as String)
           }
         }
       }
@@ -367,7 +386,13 @@ specimen {
   }
 }
 
-static String toNumType(final Object sourceType) {
+static boolean isMoreThanNDaysAgo(String dateString, int days) {
+  final Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").parse(dateString)
+  final long differenceInMillis = (System.currentTimeMillis() - date.getTime())
+  return TimeUnit.DAYS.convert(differenceInMillis, TimeUnit.MILLISECONDS) > days
+}
+// TODO: add the correct Mappings of the Type-Codes
+static String toDzhkType(final Object sourceType) {
   switch (sourceType) {
     case "BAL":
       return "NUM_bal"
@@ -386,35 +411,21 @@ static String toNumType(final Object sourceType) {
   }
 }
 
-static String toNUMProcessing(final String sourceProcessing) {
-  if (sourceProcessing.startsWith("A"))
+//TODO: Mapping of the stockProcessing codes.
+static String toDzhkProcessing(final String sourceProcessing) {
+  if (sourceProcessing.startsWith("A")) {
     return "Sprec-A"
-  if (sourceProcessing.startsWith("B"))
-    return "Sprec-B"
-  if (sourceProcessing.startsWith("C"))
-    return "Sprec-C"
-  if (sourceProcessing.startsWith("D"))
-    return "Sprec-D"
-  if (sourceProcessing.startsWith("E"))
-    return "Sprec-E"
-  if (sourceProcessing.startsWith("F"))
-    return "Sprec-F"
-  if (sourceProcessing.startsWith("G"))
-    return "Sprec-G"
-  if (sourceProcessing.startsWith("H"))
-    return "Sprec-H"
-  if (sourceProcessing.startsWith("I"))
-    return "Sprec-I"
-  if (sourceProcessing.startsWith("J"))
-    return "Sprec-J"
-  if (sourceProcessing.startsWith("M"))
-    return "Sprec-M"
-  if (sourceProcessing.startsWith("N"))
-    return "Sprec-N"
-  if (sourceProcessing.startsWith("X"))
-    return "Sprec-X"
-  if (sourceProcessing.startsWith("Z"))
-    return "Sprec-Z"
-  else
+  } else {
     return sourceProcessing
+  }
 }
+
+// TODO: Insert Mappings for container codes
+static String toDzhkContainer(final Object sourceType) {
+  switch (sourceType) {
+    case "BLD":
+      return "SER"
+    default: return sourceType
+  }
+}
+
