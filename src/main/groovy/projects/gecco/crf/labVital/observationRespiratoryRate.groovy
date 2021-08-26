@@ -22,7 +22,7 @@ import static de.kairos.fhir.centraxx.metamodel.RootEntities.laborMapping
 
 observation {
   final def studyMember = context.source[laborMapping().relatedPatient().studyMembers()].find {
-    it[StudyMember.STUDY][FlexiStudy.CODE] == "SARS-Cov-2"
+    it[StudyMember.STUDY][FlexiStudy.CODE] == "GECCO FINAL"
   }
   if (!studyMember) {
     return //no export

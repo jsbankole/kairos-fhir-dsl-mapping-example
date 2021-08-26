@@ -24,7 +24,7 @@ import static de.kairos.fhir.centraxx.metamodel.RootEntities.laborMapping
 
 observation {
   final def studyMember = context.source[laborMapping().relatedPatient().studyMembers()].find {
-    it[StudyMember.STUDY][FlexiStudy.CODE] == "SARS-Cov-2"
+    it[StudyMember.STUDY][FlexiStudy.CODE] == "GECCO FINAL"
   }
   if (!studyMember) {
     return //no export
@@ -36,7 +36,7 @@ observation {
   }
 
   final def labValAb = context.source[laborMapping().laborFinding().laborFindingLaborValues()].find {
-    "COV_GECCO_SARS-COV-2_IGG_IA" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
+    "COV_GECCO_GECCO FINAL_IGG_IA" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
   }
   if (!labValAb) {
     return
@@ -47,7 +47,7 @@ observation {
 
   meta {
     source = "https://fhir.centraxx.de"
-    profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/sars-cov-2-iga-ser-pl-ia-acnc"
+    profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/GECCO FINAL-iga-ser-pl-ia-acnc"
   }
 
   status = Observation.ObservationStatus.UNKNOWN
