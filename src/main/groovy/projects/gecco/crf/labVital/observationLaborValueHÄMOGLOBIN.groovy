@@ -1,51 +1,55 @@
-package projects.gecco.crf
+package projects.gecco.crf.labVital.laborValue
 
 import ca.uhn.fhir.model.api.TemporalPrecisionEnum
-import de.kairos.fhir.centraxx.metamodel.CatalogEntry
 import de.kairos.fhir.centraxx.metamodel.CrfItem
 import de.kairos.fhir.centraxx.metamodel.CrfTemplateField
+import de.kairos.fhir.centraxx.metamodel.FlexiStudy
 import de.kairos.fhir.centraxx.metamodel.LaborFindingLaborValue
 import de.kairos.fhir.centraxx.metamodel.LaborValue
+import de.kairos.fhir.centraxx.metamodel.StudyMember
 import org.hl7.fhir.r4.model.Observation
 
 import static de.kairos.fhir.centraxx.metamodel.RootEntities.laborMapping
 
 /**
- * Represented by a CXX StudyVisitItem
- * Specified by https://simplifier.net/forschungsnetzcovid-19/gaspanel-ph
+ * Represented by a CXX LaborMapping
+ * Specified by https://simplifier.net/guide/GermanCoronaConsensusDataSet-ImplementationGuide/Laboratoryvalue
  * @author Lukas Reinert
- * @since KAIROS-FHIR-DSL.v.1.8.0, CXX.v.3.18.1
+ * @since KAIROS-FHIR-DSL.v.1.9.0, CXX.v.3.18.1.7
  *
  */
 
 observation {
-  //final def studyMember = context.source[laborMapping().relatedPatient().studyMembers()].find{
-  //  it[StudyMember.STUDY][FlexiStudy.CODE] == "SARS-Cov-2"
-  //}
-  //if (!studyMember) {
-  //  return //no export
-  //}
-  final def profileName = context.source[laborMapping().laborFinding().laborMethod().code()]
-  if (profileName != "COV_GECCO_VITALPARAMTER") {
+
+  final def studyMember = context.source[laborMapping().relatedPatient().studyMembers()].find {
+    it[StudyMember.STUDY][FlexiStudy.CODE] == "SARS-Cov-2"
+  }
+  if (!studyMember) {
     return //no export
   }
 
-  final def labVal = context.source[laborMapping().laborFinding().laborFindingLaborValues()].find {
-    "COV_GECCO_PH_BLUT" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
+  final def profileName = context.source[laborMapping().laborFinding().laborMethod().code()]
+  if (profileName != "COV_GECOO_LABOR") {
+    return //no export
   }
-  if (!labVal) {
+
+  final def lFlV = context.source[laborMapping().laborFinding().laborFindingLaborValues()].find {
+    "COV_GECCO_HÄMOGLOBIN" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
+  }
+  if (!lFlV) {
     return
   }
 
-
-  id = "Observation/pH-" + context.source[laborMapping().id()]
+  final def numID = context.source[laborMapping().id()]
+  final String labValID = lFlV[LaborFindingLaborValue.LABOR_VALUE][LaborValue.ID]
+  id = "Observation/LaborValue-" + labValID + "-" + numID
 
   meta {
     source = "https://fhir.centraxx.de"
-    profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/pH"
+    profile "https://www.medizininformatik-initiative.de/fhir/core/modul-labor/StructureDefinition/ObservationLab"
   }
 
-  status = Observation.ObservationStatus.UNKNOWN
+  status = Observation.ObservationStatus.FINAL
 
   category {
     coding {
@@ -56,16 +60,13 @@ observation {
       system = "http://terminology.hl7.org/CodeSystem/observation-category"
       code = "laboratory"
     }
-    coding {
-      system = "http://loinc.org"
-      code = "18767-4"
-    }
   }
 
-  code {
-    coding {
+
+  code{
+    coding{
       system = "http://loinc.org"
-      code = "11558-4"
+      code = "718-7"
     }
   }
 
@@ -76,19 +77,18 @@ observation {
     }
   }
 
+
   effectiveDateTime {
     date = normalizeDate(context.source[laborMapping().creationDate()] as String)
     precision = TemporalPrecisionEnum.DAY.toString()
   }
 
-  labVal[LaborFindingLaborValue.NUMERIC_VALUE]?.each { final numVal ->
-    if (numVal){
-      valueQuantity {
-        value = numVal
-        unit = "pH"
-        system = "http://unitsofmeasure.org"
-        code = "[pH]"
-      }
+  def numVal =lFlV[LaborFindingLaborValue.NUMERIC_VALUE]
+  if (numVal){
+    valueQuantity {
+      value = numVal
+      unit = "g/dL"
+      system = "http://unitsofmeasure.org"
     }
   }
 }

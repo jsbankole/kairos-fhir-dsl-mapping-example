@@ -6,15 +6,16 @@ import de.kairos.fhir.centraxx.metamodel.CrfItem
 import de.kairos.fhir.centraxx.metamodel.CrfTemplateField
 import de.kairos.fhir.centraxx.metamodel.LaborFindingLaborValue
 import de.kairos.fhir.centraxx.metamodel.LaborValue
+import org.hl7.fhir.r4.model.IntegerType
 import org.hl7.fhir.r4.model.Observation
 
 import static de.kairos.fhir.centraxx.metamodel.RootEntities.laborMapping
 
 /**
  * Represented by a CXX StudyVisitItem
- * Specified by https://simplifier.net/forschungsnetzcovid-19/respiratoryrate
- * @author Lukas Reinert, Mike Wähnert
- * @since KAIROS-FHIR-DSL.v.1.8.0, CXX.v.3.18.1
+ * Specified by https://simplifier.net/forschungsnetzcovid-19/sofa
+ * @author Lukas Reinert
+ * @since KAIROS-FHIR-DSL.v.1.9.0, CXX.v.3.18.1.7
  *
  */
 
@@ -31,18 +32,18 @@ observation {
   }
 
   final def labVal = context.source[laborMapping().laborFinding().laborFindingLaborValues()].find {
-    "COV_GECCO_ATEMFREQUENZ" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
+    "COV_GECCO_SOFA" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
   }
   if (!labVal) {
     return
   }
 
 
-  id = "Observation/RespiratoryRate-" + context.source[laborMapping().id()]
+  id = "Observation/SOFAScore-" + context.source[laborMapping().id()]
 
   meta {
     source = "https://fhir.centraxx.de"
-    profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/respiratory-rate"
+    profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/sofa-score"
   }
 
   status = Observation.ObservationStatus.UNKNOWN
@@ -50,18 +51,14 @@ observation {
   category {
     coding {
       system = "http://terminology.hl7.org/CodeSystem/observation-category"
-      code = "vital-signs"
+      code = "survey"
     }
   }
 
   code {
     coding {
-      system = "http://loinc.org"
-      code = "9279-1"
-    }
-    coding {
-      system = "http://snomed.info/sct"
-      code = "86290005"
+      system = "https://www.netzwerk-universitaetsmedizin.de/fhir/CodeSystem/ecrf-parameter-codes"
+      code = "06"
     }
   }
 
@@ -79,12 +76,7 @@ observation {
 
   labVal[LaborFindingLaborValue.NUMERIC_VALUE]?.each { final numVal ->
     if (numVal){
-      valueQuantity {
-        value = numVal
-        unit = "per minute"
-        system = "http://unitsofmeasure.org"
-        code = "/min"
-      }
+      valueInteger(numVal.toString().substring(0,1).toInteger())
     }
   }
 }

@@ -12,9 +12,9 @@ import static de.kairos.fhir.centraxx.metamodel.RootEntities.laborMapping
 
 /**
  * Represented by a CXX StudyVisitItem
- * Specified by https://simplifier.net/forschungsnetzcovid-19/sarscov2igaserpliaacnc
+ * Specified by https://simplifier.net/forschungsnetzcovid-19/sarscov2rtpcr
  * @author Lukas Reinert, Mike Wähnert
- * @since KAIROS-FHIR-DSL.v.1.8.0, CXX.v.3.18.1
+ * @since KAIROS-FHIR-DSL.v.1.9.0, CXX.v.3.18.1.7
  *
  * hints:
  *  A StudyEpisode is no regular episode and cannot reference an encounter
@@ -32,19 +32,18 @@ observation {
     return //no export
   }
 
-  final def labValAb = context.source[laborMapping().laborFinding().laborFindingLaborValues()].find {
-    "COV_GECCO_SARS-COV-2_IGG_IA" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
+  final def labValDisc = context.source[laborMapping().laborFinding().laborFindingLaborValues()].find {
+    "COV_GECCO_SARS-COV-2-PCR" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
   }
-  if (!labValAb) {
+  if (!labValDisc) {
     return
   }
 
-
-  id = "Observation/SARSCoV2-IgA-" + context.source[laborMapping().id()]
+  id = "Observation/SarsCov2RT-PCR-COV_GECCO_SARS-COV-2-PCR-" + context.source[laborMapping().id()]
 
   meta {
     source = "https://fhir.centraxx.de"
-    profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/sars-cov-2-iga-ser-pl-ia-acnc"
+    profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/sars-cov-2-rt-pcr"
   }
 
   status = Observation.ObservationStatus.UNKNOWN
@@ -63,7 +62,7 @@ observation {
   code {
     coding {
       system = "http://loinc.org"
-      code = "94720-0"
+      code = "94500-6"
     }
   }
 
@@ -79,18 +78,27 @@ observation {
     }
   }
 
-  labValAb[LaborFindingLaborValue.NUMERIC_VALUE]?.each { final numVal ->
-    if (numVal){
-      valueQuantity {
-        value = numVal
-        unit = "mg/dl"
-        system = "http://unitsofmeasure.org"
+  //Vaccine codes
+  valueCodeableConcept {
+    labValDisc[LaborFindingLaborValue.CATALOG_ENTRY_VALUE].each{ final catEntry ->
+      coding {
+        system = "http://snomed.info/sct"
+        code = mapDiscSNOMED(catEntry[CatalogEntry.CODE] as String)
       }
     }
   }
 }
 
-
+static String mapDiscSNOMED(final String discharge) {
+  switch (discharge) {
+    default:
+      return null
+    case "COV_POSITIV":
+      return "260373001"
+    case "COV_NEGATIV":
+      return "260415000"
+  }
+}
 static String normalizeDate(final String dateTimeString) {
   return dateTimeString != null ? dateTimeString.substring(0, 19) : null
 }
