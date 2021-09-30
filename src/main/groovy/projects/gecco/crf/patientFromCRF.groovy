@@ -28,7 +28,7 @@ patient {
     return //no export
   }
 
-  id = "Patient/" + context.source[studyVisitItem().studyMember().patientContainer().id()]
+  id = "Patient/Cxx-Patient-" + context.source[studyVisitItem().studyMember().patientContainer().id()]
 
   meta {
     source = "https://fhir.centraxx.de"
