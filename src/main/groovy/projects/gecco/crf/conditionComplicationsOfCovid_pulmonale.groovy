@@ -88,22 +88,22 @@ condition {
     if (crfItemCoinfect[CrfItem.CATALOG_ENTRY_VALUE] != []) {
       crfItemCoinfect[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item ->
         final def ICDcode = item[CatalogEntry.CODE] as String
-        if (ICDcode == "COV_JA") {
-          coding {
-            system = "http://fhir.de/CodeSystem/dimdi/icd-10-gm"
-            version = "2020"
-            code = "J18.9"
-          }
+        //if (ICDcode == "COV_JA") {
+        coding {
+          system = "http://fhir.de/CodeSystem/dimdi/icd-10-gm"
+          version = "2020"
+          code = "J18.9"
         }
+        //}
       }
       crfItemCoinfect[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item ->
         final def SNOMEDcode = item[CatalogEntry.CODE] as String
-        if (SNOMEDcode == "COV_JA") {
-          coding {
-            system = "http://snomed.info/sct"
-            code = "128601007"
-          }
+        //if (SNOMEDcode == "COV_JA") {
+        coding {
+          system = "http://snomed.info/sct"
+          code = "128601007"
         }
+        //}
       }
     }
   }
