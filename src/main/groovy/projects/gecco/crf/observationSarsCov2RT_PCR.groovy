@@ -80,10 +80,7 @@ observation {
       code = "94500-6"
     }
   }
-  effectiveDateTime {
-    date = normalizeDate(crfItemDisc[CrfItem.CREATIONDATE] as String)
-    precision = TemporalPrecisionEnum.DAY.toString()
-  }
+
   subject {
     reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().id()]
   }
@@ -127,7 +124,6 @@ observation {
   effectiveDateTime {
     date = selectMostRecentDate(pcrDateList)
   }
-
 
 
 }
