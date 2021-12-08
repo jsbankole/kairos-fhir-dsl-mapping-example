@@ -8,17 +8,42 @@
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      "transformByTemplate": "conditionCardiovascularDisease",
+      "transformByTemplate": "conditionCardiovascularDisease_bluthochdruck",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      "transformByTemplate": "conditionChronicLiverDisease",
+      "transformByTemplate": "conditionCardiovascularDisease_herzinfarkt",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      "transformByTemplate": "conditionRheumaImmunoDisease",
+      "transformByTemplate": "conditionCardiovascularDisease_herzrhythmusstoerungen",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionCardiovascularDisease_herzinsuffizienz",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionCardiovascularDisease_pavk",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionCardiovascularDisease_revaskularisation",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionCardiovascularDisease_koronareherzkrankheit",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionCardiovascularDisease_carotisstenose",
       "exportToFhirResource": "Condition"
     },
     {
@@ -43,17 +68,7 @@
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      "transformByTemplate": "conditionNeuroDisease",
-      "exportToFhirResource": "Condition"
-    },
-    {
-      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
       "transformByTemplate": "conditionChronicKidneyDisease",
-      "exportToFhirResource": "Condition"
-    },
-    {
-      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      "transformByTemplate": "conditionChronicLungDisease",
       "exportToFhirResource": "Condition"
     },
     {
