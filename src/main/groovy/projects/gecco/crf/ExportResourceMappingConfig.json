@@ -173,6 +173,41 @@
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionRheumaImunoDisease_chronischentzuendlichedarmerkrankung",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionRheumaImunoDisease_rheumatoidearthritis",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionRheumaImunoDisease_kollagenosen",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionRheumaImunoDisease_vaskulitis",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionRheumaImunoDisease_angeboreneimmundefekte",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionRheumaImunoDisease_rheumatologischeerkrankung",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionRheumaImunoDisease_immunologischeerkrankung",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
       "transformByTemplate": "conditionHIV",
       "exportToFhirResource": "Condition"
     },
