@@ -28,7 +28,7 @@ condition {
     return //no export
   }
   final def crfItemOrgan = context.source[studyVisitItem().crf().items()].find {
-    "COV_GECCO_ORGANTRANSPLANIERT" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
+    "COV_GECCO_ORGANTRANSPLANTATION" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
   }
   if (!crfItemOrgan) {
     return
@@ -43,33 +43,109 @@ condition {
 
     crfItemOrgan[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item ->
       final def VERcode = matchResponseToVerificationStatus(item[CatalogEntry.CODE] as String)
-      if (VERcode == "261665006") {
-        extension {
-          url = "https://simplifier.net/forschungsnetzcovid-19/uncertaintyofpresence"
-          valueCodeableConcept {
-            coding {
-              system = "http://snomed.info/sct"
-              code = "261665006"
-            }
+      final def VERcode_JA = matchResponseToVerificationStatus("COV_JA")
+      final def VERcode_NEIN = matchResponseToVerificationStatus("COV_NEIN")
+      final def VERcode_UNBEKANNT = matchResponseToVerificationStatus("COV_UNBEKANNT")
+
+      // Disease confirmed Present
+      if (VERcode == VERcode_JA) {
+
+        clinicalStatus {
+          coding {
+            system = "http://terminology.hl7.org/CodeSystem/condition-clinical"
+            code = "active"
+            display = "Active"
           }
         }
-      } else if (["410594000", "410605003"].contains(VERcode)) {
+
         verificationStatus {
+          coding {
+            system = "http://terminology.hl7.org/CodeSystem/condition-ver-status"
+            code = matchResponseToVerificationStatusHL7(item[CatalogEntry.CODE] as String)
+            display = "Confirmed"
+          }
           coding {
             system = "http://snomed.info/sct"
             code = VERcode
+            display = "Confirmed present (qualifier value)"
           }
+        }
+
+
+
+
+        //Organ Selection
+        final def crfItemOrganList = context.source[studyVisitItem().crf().items()].find {
+          "COV_GECCO_ORGANTRANSPLANTATION_LIST" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
+        }
+        crfItemOrganList[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item2 ->
+          bodySite {
+            final def ICDcode = matchResponseToICD(item2[CatalogEntry.CODE] as String)
+            if (ICDcode) {
+              coding {
+                system = "http://fhir.de/CodeSystem/dimdi/icd-10-gm"
+                code = ICDcode
+              }
+            }
+            final def SNOMEDcode = matchResponseToSNOMED(item2[CatalogEntry.CODE] as String)
+            if (SNOMEDcode) {
+              coding {
+                system = "http://snomed.info/sct"
+                code = SNOMEDcode
+              }
+            }
+          }
+        }
+
+
+
+
+
+
+
+
+        // Disease confirmed Absence
+      } else if (VERcode == VERcode_NEIN) {
+        verificationStatus {
           coding {
             system = "http://terminology.hl7.org/CodeSystem/condition-ver-status"
             code = matchResponseToVerificationStatusHL7(item[CatalogEntry.CODE] as String)
           }
+          coding {
+            system = "http://snomed.info/sct"
+            code = VERcode
+          }
+        }
+
+        // Disease presence unknown
+      } else if (VERcode == VERcode_UNBEKANNT) {
+        modifierExtension {
+          url = "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/uncertainty-of-presence"
+          valueCodeableConcept {
+            coding {
+              system = "http://snomed.info/sct"
+              code = VERcode_UNBEKANNT
+              display = "Unknown (qualifier value)"
+            }
+            text =  "Presence of condition is unknown."
+          }
         }
       }
     }
+
     category {
       coding {
         system = "http://snomed.info/sct"
         code = "788415003"
+        display = "Transplant medicine"
+      }
+    }
+
+    code {
+      coding {
+        system = "http://snomed.info/sct"
+        version = "161663000"
+        display = "History of being a tissue or organ recipient"
       }
     }
 
@@ -77,28 +153,6 @@ condition {
       reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().id()]
     }
 
-    code {
-      crfItemOrgan[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item ->
-        final def ICDcode = matchResponseToICD(item[CatalogEntry.CODE] as String)
-        if (ICDcode) {
-          coding {
-            system = "http://fhir.de/CodeSystem/dimdi/icd-10-gm"
-            version = "2020"
-            code = ICDcode
-          }
-        }
-      }
-      crfItemOrgan[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item ->
-        final def SNOMEDcode = matchResponseToSNOMED(item[CatalogEntry.CODE] as String)
-        if (SNOMEDcode) {
-          coding {
-            system = "http://snomed.info/sct"
-            code = SNOMEDcode
-          }
-        }
-      }
-
-    }
     recordedDate {
       date = normalizeDate(crfItemOrgan[CrfItem.CREATIONDATE] as String)
       precision = TemporalPrecisionEnum.DAY.toString()

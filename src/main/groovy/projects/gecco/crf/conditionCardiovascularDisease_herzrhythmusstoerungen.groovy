@@ -30,7 +30,7 @@ condition {
   }
 
   final def crfItemCardiovascular = context.source[studyVisitItem().crf().items()].find {
-    "COV_GECCO_HERZKREISLAUF_HERZRHYTHMUSST�RUNGEN" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
+    "COV_GECCO_HERZKREISLAUF_HERZRHYTHMUSSTOERUNGEN" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
   }
 
   if (crfItemCardiovascular[CrfItem.CATALOG_ENTRY_VALUE] != []) {
