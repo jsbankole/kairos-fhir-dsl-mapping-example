@@ -21,7 +21,9 @@ If desired new disease just add it here
 ### generateGroovyFromTemplate.py
 python file that generates the groovy files
 Only required to (un)comment the desired "area" to which we want to generate the groovy files
+Possible to select more than one area simultaneously
 The files are generated in the current directory
+ALL the files for ALL diseases of specific area will be created
 Afterwards just need to move the groovy files from the current directory to the desired one
 After running each time the aux_ExportResourceMappingConfig.txt is also created, here is the extract with the required string to be added in the ExportResourceMappingConfig
 
