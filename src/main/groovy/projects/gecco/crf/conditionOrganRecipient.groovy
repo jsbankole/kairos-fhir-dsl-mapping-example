@@ -71,9 +71,6 @@ condition {
           }
         }
 
-
-
-
         //Organ Selection
         final def crfItemOrganList = context.source[studyVisitItem().crf().items()].find {
           "COV_GECCO_ORGANTRANSPLANTATION_LIST" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
@@ -96,13 +93,6 @@ condition {
             }
           }
         }
-
-
-
-
-
-
-
 
         // Disease confirmed Absence
       } else if (VERcode == VERcode_NEIN) {
