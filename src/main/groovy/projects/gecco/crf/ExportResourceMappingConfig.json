@@ -108,6 +108,71 @@
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionNeuroDisease_chronischeneurologischeerkrankung",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionNeuroDisease_psychiatrischeerkrankung",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionNeuroDisease_angsterkrankung",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionNeuroDisease_depression",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionNeuroDisease_psychose",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionNeuroDisease_parkinson",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionNeuroDisease_demenz",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionNeuroDisease_multiplesklerose",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionNeuroDisease_neuromuskulaereerkrankungen",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionNeuroDisease_epilepsie",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionNeuroDisease_migraene",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionNeuroDisease_apoplexmitresiduen",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionNeuroDisease_apoplexohneresiduen",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
       "transformByTemplate": "conditionHIV",
       "exportToFhirResource": "Condition"
     },
