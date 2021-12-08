@@ -11,7 +11,7 @@ import static de.kairos.fhir.centraxx.metamodel.RootEntities.studyVisitItem
 /**
  * Old version
  * Represented by a CXX StudyVisitItem
- * Specified by https://simplifier.net/forschungsnetzcovid-19/cardiovasculardiseases
+ * Specified by https://simplifier.net/forschungsnetzcovid-19/chronicliverdiseases
  * @author Lukas Reinert, Mike Wähnert
  * @since KAIROS-FHIR-DSL.v.1.8.0, CXX.v.3.18.1
  *
@@ -29,19 +29,19 @@ condition {
     return //no export
   }
 
-  final def crfItemCardiovascular = context.source[studyVisitItem().crf().items()].find {
-    "##ParameterCodeDisease##" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
+  final def crfItemLiver = context.source[studyVisitItem().crf().items()].find {
+    "COV_GECCO_LEBERERKRANKUNG_HEPATITIS" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
   }
 
-  if (crfItemCardiovascular[CrfItem.CATALOG_ENTRY_VALUE] != []) {
-    id = "Condition/ChronicCardiovascularDisease-##IdComplement##-" + context.source[studyVisitItem().crf().id()]
+  if (crfItemLiver[CrfItem.CATALOG_ENTRY_VALUE] != []) {
+    id = "Condition/ChronicLiverDisease-Hepatitis-" + context.source[studyVisitItem().crf().id()]
 
     meta {
       source = "https://fhir.centraxx.de"
-      profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/cardiovascular-diseases"
+      profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/chronic-liver-diseases"
     }
 
-    crfItemCardiovascular[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item ->
+    crfItemLiver[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item ->
       final def VERcode = matchResponseToVerificationStatus(item[CatalogEntry.CODE] as String)
       final def VERcode_JA = matchResponseToVerificationStatus("COV_JA")
       final def VERcode_NEIN = matchResponseToVerificationStatus("COV_NEIN")
@@ -93,28 +93,28 @@ condition {
     category {
       coding {
         system = "http://snomed.info/sct"
-        code = "722414000"
-        display = "Vascular medicine"
+        code = "408472002"
+        display = "Hepatology"
       }
     }
 
     code {
-      final def ICDcode = "##ICDCode##"
+      final def ICDcode = "B18.9"
       if (ICDcode != "") {
         coding {
           system = "http://fhir.de/CodeSystem/dimdi/icd-10-gm"
           version = "2020"
           code = ICDcode
-          display = "##DiseaseName-EN##"
+          display = "Chronic viral hepatitis"
         }
       }
 
-      final def SNOMEDcode = "##SnomedCode##"
+      final def SNOMEDcode = "10295004"
       if (SNOMEDcode != "") {
         coding {
           system = "http://snomed.info/sct"
           code = SNOMEDcode
-          display = "##DiseaseName-EN##"
+          display = "Chronic viral hepatitis"
         }
       }
     }
@@ -124,7 +124,7 @@ condition {
     }
 
     recordedDate {
-      date = normalizeDate(crfItemCardiovascular[CrfItem.CREATIONDATE] as String)
+      date = normalizeDate(crfItemLiver[CrfItem.CREATIONDATE] as String)
       precision = TemporalPrecisionEnum.DAY.toString()
     }
 

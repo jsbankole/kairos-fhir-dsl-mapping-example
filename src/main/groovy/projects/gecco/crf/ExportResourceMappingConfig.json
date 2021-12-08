@@ -48,6 +48,26 @@
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionLiverDisease_fettleber",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionLiverDisease_leberzirrhose",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionLiverDisease_hepatitis",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionLiverDisease_autoimmunelebererkrankungen",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
       "transformByTemplate": "conditionHIV",
       "exportToFhirResource": "Condition"
     },
