@@ -6,6 +6,8 @@ import de.kairos.fhir.centraxx.metamodel.CrfItem
 import de.kairos.fhir.centraxx.metamodel.CrfTemplateField
 import de.kairos.fhir.centraxx.metamodel.LaborValue
 
+import javax.management.openmbean.CompositeDataInvocationHandler
+
 import static de.kairos.fhir.centraxx.metamodel.RootEntities.studyVisitItem
 
 /**
@@ -27,45 +29,57 @@ procedure {
   final def crfItemRespThera = context.source[studyVisitItem().crf().items()].find {
     "COV_GECCO_BEATMUNGSTYP" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
   }
-  if (!crfItemRespThera) {
+  if (!crfItemRespThera || crfItemRespThera[CrfItem.CATALOG_ENTRY_VALUE] == []) {
     return
   }
-  if (crfItemRespThera[CrfItem.CATALOG_ENTRY_VALUE] != []) {
-    id = "Procedure/VentilationType-" + context.source[studyVisitItem().id()]
 
-    meta {
-      source = "https://fhir.centraxx.de"
-      profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/respiratory-therapies"
+  final def fields = getFields(crfItemRespThera[CrfItem.CATALOG_ENTRY_VALUE][0][CatalogEntry.CODE] as String)
+  if(!fields[0]) {
+    return
+  }
+
+  id = "Procedure/VentilationType-" + context.source[studyVisitItem().id()]
+
+  meta {
+    source = "https://fhir.centraxx.de"
+    profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/respiratory-therapies"
+  }
+
+  category {
+    coding {
+      system = "http://snomed.info/sct"
+      code = "277132007"
+      display = "Therapeutic procedure (procedure)"
     }
+  }
 
-    status = "unknown"
+  status = fields[0]
 
-    category {
+  code {
+    coding {
+      system = "http://snomed.info/sct"
+      code = fields[1]
+      display = fields[2]
+    }
+  }
+
+  if(fields[3]){
+    usedCode {
       coding {
         system = "http://snomed.info/sct"
-        code = "277132007"
+        code = fields[3]
+        display = fields[4]
       }
     }
+  }
 
-    code {
-      crfItemRespThera[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item ->
-        final def SNOMEDcode = matchResponseToSNOMED(item[CatalogEntry.CODE] as String)
-        if (SNOMEDcode) {
-          coding {
-            system = "http://snomed.info/sct"
-            code = SNOMEDcode
-          }
-        }
-      }
-    }
-    subject {
-      reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().id()]
-    }
+  subject {
+    reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().id()]
+  }
 
-    performedDateTime {
-      date = normalizeDate(context.source[studyVisitItem().crf().creationDate()] as String)
-      precision = TemporalPrecisionEnum.DAY.toString()
-    }
+  performedDateTime {
+    date = normalizeDate(context.source[studyVisitItem().crf().creationDate()] as String)
+    precision = TemporalPrecisionEnum.DAY.toString()
   }
 }
 
@@ -73,18 +87,28 @@ static String normalizeDate(final String dateTimeString) {
   return dateTimeString != null ? dateTimeString.substring(0, 19) : null
 }
 
-static String matchResponseToSNOMED(final String resp) {
+static String[] getFields(final String resp) {
+  // return [Procedure.status	Procedure.code x2	Procedure.usedCode x2]
+
   switch (resp) {
     case ("COV_NEIN"):
-      return "not-performed"
+      return ["not-done", "40617009", "Artificial respiration (procedure)", null, null]
+
+    case ("COV_NA"):
+      return ["unknown", "40617009", "Artificial respiration (procedure)", null, null]
+
     case ("COV_NHFST"):
-      return "371907003:425391005=426854004"
+      return ["in-progress", "371907003", "Oxygen administration by nasal cannula (procedure)", "426854004", "High flow oxygen nasal cannula (physical object)"]
+
     case ("COV_NIB"):
-      return "428311008"
+      return ["in-progress", "428311008", "Noninvasive ventilation (procedure)", null, null]
+
     case ("COV_INVASIVE_BEATMUNG"):
-      return "40617009:425391005=26412008"
+      return ["in-progress", "40617009", "Artificial respiration (procedure)", "26412008", "Endotracheal tube, device (physical object)"]
+
     case ("COV_TRACHEOTOMIE"):
-      return "40617009:425391005=129121000"
-    default: null
+      return ["in-progress", "40617009", "Artificial respiration (procedure)", "129121000", "Tracheostomy tube, device (physical object)"]
+
+    default: [null, null, null, null, null]
   }
 }

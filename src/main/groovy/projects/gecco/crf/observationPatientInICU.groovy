@@ -61,11 +61,12 @@ observation {
 
     valueCodeableConcept {
       crfItemPatinICU[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item ->
-        final def SNOMEDcode = mapExpoSNOMED(item[CatalogEntry.CODE] as String)
-        if (SNOMEDcode) {
+        final def fields = getFields(item[CatalogEntry.CODE] as String)
+        if (fields[0]) {
           coding {
             system = "http://snomed.info/sct"
-            code = SNOMEDcode
+            code = fields[0]
+            display = fields[1]
           }
         }
       }
@@ -77,15 +78,15 @@ static String normalizeDate(final String dateTimeString) {
   return dateTimeString != null ? dateTimeString.substring(0, 19) : null
 }
 
-static String mapExpoSNOMED(final String patInICU) {
+static String[] getFields(final String patInICU) {
   switch (patInICU) {
     default:
-      return null
+      return [null, null]
     case "COV_JA":
-      return "373066001"
+      return ["373066001", "Yes (qualifier value)"]
     case "COV_NEIN":
-      return "373067005"
-    case "COV_NA":
-      return "385432009"
+      return ["373067005", "No (qualifier value)"]
+    case "COV_UNBEKANNT":
+      return ["261665006", "Unknown (qualifier value)"]
   }
 }
