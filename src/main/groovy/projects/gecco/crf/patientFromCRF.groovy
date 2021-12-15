@@ -28,42 +28,46 @@ patient {
     return //no export
   }
 
-  id = "Patient/Cxx-Patient-" + context.source[studyVisitItem().studyMember().patientContainer().id()]
+  //id = "Patient/Cxx-Patient-" + context.source[studyVisitItem().studyMember().patientContainer().id()]
 
   meta {
     source = "https://fhir.centraxx.de"
     profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/Patient"
   }
 
+  // Ethnicity
   final def crfItemEthn = context.source[studyVisitItem().crf().items()].find {
     "COV_GECCO_ETHNISCHE_ZUGEHOERIGKEIT" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
   }
-  if (crfItemEthn[CrfItem.CATALOG_ENTRY_VALUE] != [] && crfItemEthn) {
-    extension {
-      url = "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/ethnic-group"
-      valueCoding {
-        system = "http://snomed.info/sct"
-        code = mapEthnicityCode(crfItemEthn[CrfItem.CATALOG_ENTRY_VALUE][CatalogEntry.CODE] as String)
+
+  id = crfItemEthn
+
+  if (crfItemEthn && crfItemEthn[CrfItem.CATALOG_ENTRY_VALUE] != []) {
+    final def fields = getEthnicityInfo(crfItemEthn[CrfItem.CATALOG_ENTRY_VALUE][0][CatalogEntry.CODE] as String)
+    if(fields[0]){
+      extension {
+        url = "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/ethnic-group"
+        valueCoding {
+          system = fields[2]
+          code = fields[0]
+          display = fields[1]
+        }
       }
     }
   }
 
+  // Birthdate & Age
+  final def crfItemBirthdate = context.source[studyVisitItem().crf().items()].find {
+    "COV_GECCO_GEBURTSDATUM" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
+  }
 
-  extension {
-    url = "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/age"
+  if (crfItemBirthdate) {
+    final def ageDate = crfItemBirthdate[CrfItem.DATE_VALUE]
     extension {
-      url = "dateTimeOfDocumentation"
-      valueDateTime = normalizeDate(context.source[studyVisitItem().crf().creationDate()] as String)
-    }
-
-
-    final def crfItemAge = context.source[studyVisitItem().crf().items()].find {
-      "COV_GECCO_GEBURTSDATUM" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
-    }
-
-
-    if (crfItemAge) {
-      final def ageDate = crfItemAge[CrfItem.DATE_VALUE]
+      extension {
+        url = "dateTimeOfDocumentation"
+        valueDateTime = normalizeDate(context.source[studyVisitItem().crf().creationDate()] as String)
+      }
       extension {
         url = "age"
         valueAge {
@@ -73,22 +77,21 @@ patient {
           unit = "years"
         }
       }
-      birthDate = ageDate.toString().substring(6, 16)
+      url = "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/age"
     }
+    birthDate = ageDate.toString().substring(6, 16)
   }
 
   active = context.source[studyVisitItem().studyMember().patientContainer().patientStatus()]
 
+  // Gender
   final def crfItemGender = context.source[studyVisitItem().crf().items()].find {
     "COV_GECCO_GESCHLECHT_GEBURT" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
   }
-  if (crfItemGender) {
-    crfItemGender[CrfItem.CATALOG_ENTRY_VALUE][CatalogEntry.CODE]?.each { final gen ->
-      gender = mapGender(gen as String)
-    }
+  if (crfItemGender && crfItemGender[CrfItem.CATALOG_ENTRY_VALUE] != []) {
+    gender = mapGender(crfItemGender[CrfItem.CATALOG_ENTRY_VALUE][0][CatalogEntry.CODE] as String)
   }
 }
-
 
 static String mapGender(final String gender) {
   switch (gender) {
@@ -96,18 +99,16 @@ static String mapGender(final String gender) {
       return "male"
     case "COV_WEIBLICH":
       return "female"
-    case "COV_KEINE_ANGABE":
-      return "unknown"
     case "COV_DIVERS":
       return "other"
+    default:
+      return "unknown"
   }
 }
-
 
 static String normalizeDate(final String dateTimeString) {
   return dateTimeString != null ? dateTimeString.substring(0, 10) : null
 }
-
 
 //Compute age of patient from birthdate
 static int computeAge(final String dateString) {
@@ -117,22 +118,24 @@ static int computeAge(final String dateString) {
 }
 
 //Function to map ethnicities
-static String mapEthnicityCode(final String ethnicity) {
+static String[] getEthnicityInfo(final String ethnicity) {
   switch (ethnicity) {
     case "COV_KAUKASIER":
-      return "14045001"
+      return ["14045001", "Caucasian (ethnic group)", "http://snomed.info/sct"]
     case "COV_AFRIKANER":
-      return "18167009"
+      return ["18167009", "Black African (ethnic group)", "http://snomed.info/sct"]
     case "COV_ASIATE":
-      return "315280000"
+      return ["315280000", "Asian - ethnic group (ethnic group)", "http://snomed.info/sct"]
     case "COV_ARABISCH":
-      return "90027003"
+      return ["90027003", "Arabs (ethnic group)", "http://snomed.info/sct"]
     case "COV_LATEIN_AMERIKANISCH":
-      return "2135-2"
-    case "COV_186019001":
-      return "26242008"
+      return ["2135-2", "Hispanic or Latino", "urn:oid:2.16.840.1.113883.6.238"]
+    case "COV_GEMISCHTE":
+      return ["26242008", "Mixed (qualifier value)", "http://snomed.info/sct"]
+    case "COV_ETHNISCHE_ZUGEHOERIGKEIT_ANDERE":
+      return ["372148003", "Ethnic group (ethnic group)", "http://snomed.info/sct"]
     default:
-      return "261665006"
+      [null, null, null]
   }
 }
 

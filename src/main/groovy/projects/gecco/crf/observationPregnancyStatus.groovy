@@ -44,6 +44,13 @@ observation {
 
     status = Observation.ObservationStatus.UNKNOWN
 
+    category {
+      coding {
+        system = "http://terminology.hl7.org/CodeSystem/observation-category"
+        code = "social-history"
+      }
+    }
+
     code {
       coding {
         system = "http://loinc.org"
@@ -62,21 +69,18 @@ observation {
 
     valueCodeableConcept {
       crfItemPreg[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item ->
-        final def LOINCcode = mapPreg(item[CatalogEntry.CODE] as String)
-        if (LOINCcode) {
-          coding {
-            system = "http://loinc.org"
-            code = LOINCcode
-          }
+        final def fields = getPregInfo(item[CatalogEntry.CODE] as String)
 
-        }
-      }
-      crfItemPreg[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item ->
-        final def SNOMEDcode = mapPregSNOMED(item[CatalogEntry.CODE] as String)
-        if (SNOMEDcode) {
+        if (fields[0]) {
           coding {
             system = "http://snomed.info/sct"
-            code = SNOMEDcode
+            code = fields[0]
+          }
+          if (fields[1]) {
+            coding {
+              system = "http://loinc.org"
+              code = fields[1]
+            }
           }
         }
       }
@@ -84,33 +88,21 @@ observation {
   }
 }
 
-
 static String normalizeDate(final String dateTimeString) {
   return dateTimeString != null ? dateTimeString.substring(0, 19) : null
 }
 
-static String mapPreg(final String smokingStatus) {
-  switch (smokingStatus) {
+static String[] getPregInfo(final String pregStatus) {
+  //[SnomedCode, LoincCode]
+  switch (pregStatus) {
     default:
       return null
     case "COV_JA":
-      return "LA15173-0"
+      return ["77386006", "LA15173-0"]
     case "COV_NEIN":
-      return "LA26683-5"
+      return ["60001007", "LA26683-5"]
     case "COV_UNBEKANNT":
-      return "LA4489-6"
+      return ["261665006", "LA4489-6"]
   }
 }
 
-static String mapPregSNOMED(final String smokingStatus) {
-  switch (smokingStatus) {
-    default:
-      return null
-    case "COV_JA":
-      return "77386006"
-    case "COV_NEIN":
-      return "60001007"
-    case "COV_UNBEKANNT":
-      return "261665006"
-  }
-}

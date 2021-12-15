@@ -1,5 +1,6 @@
 package projects.gecco.crf
 
+import ca.uhn.fhir.model.api.TemporalPrecisionEnum
 import de.kairos.fhir.centraxx.metamodel.CatalogEntry
 import de.kairos.fhir.centraxx.metamodel.CrfItem
 import de.kairos.fhir.centraxx.metamodel.CrfTemplateField
@@ -28,7 +29,7 @@ observation {
     return //no export
   }
   final def crfItemGen = context.source[studyVisitItem().crf().items()].find {
-    "COV_GECCO_Geschlecht_GEBURT" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
+    "COV_GECCO_GESCHLECHT_GEBURT" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
   }
   if (!crfItemGen) {
     return
@@ -41,12 +42,13 @@ observation {
       profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/sex-assigned-at-birth"
     }
 
-    status = Observation.ObservationStatus.UNKNOWN
+    status = Observation.ObservationStatus.FINAL
 
     category {
       coding {
         system = "http://terminology.hl7.org/CodeSystem/observation-category"
         code = "social-history"
+        display = "Social History"
       }
     }
 
@@ -54,6 +56,7 @@ observation {
       coding {
         system = "http://loinc.org"
         code = "76689-9"
+        display = "Sex assigned at birth"
       }
     }
 
@@ -61,45 +64,42 @@ observation {
       reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().id()]
     }
 
+    effectiveDateTime {
+      date = normalizeDate(context.source[studyVisitItem().crf().creationDate()] as String)
+    }
+
     valueCodeableConcept {
       crfItemGen[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item ->
-        final def LOINCcode = mapGender(item[CatalogEntry.CODE] as String)
-        if (LOINCcode) {
-          if (["male", "female", "unknown"].contains(LOINCcode)) {
-            coding {
-              system = "http://hl7.org/fhir/administrative-gender"
-              code = LOINCcode
-            }
-          } else if (["x", "D"].contains(LOINCcode)) {
-            coding {
-              system = "http://fhir.de/CodeSystem/gender-amtlich-de"
-              code = LOINCcode
-            }
-          }
+        final def fields = getGenderFields(item[CatalogEntry.CODE] as String)
+        if (!fields[0]) {
+          return
+        }
+        coding {
+          system = fields[1]
+          code = fields[0]
         }
       }
     }
   }
 }
 
-
 static String normalizeDate(final String dateTimeString) {
   return dateTimeString != null ? dateTimeString.substring(0, 19) : null
 }
 
-static String mapGender(final String gender) {
+static String[] getGenderFields(final String gender) {
   switch (gender) {
     case "COV_MAENNLICH":
-      return "male"
+      return ["male", "http://hl7.org/fhir/administrative-gender"]
     case "COV_WEIBLICH":
-      return "female"
+      return ["female", "http://hl7.org/fhir/administrative-gender"]
     case "COV_KEINE_ANGABE":
-      return "X"
+      return ["X", "http://fhir.de/CodeSystem/gender-amtlich-de"]
     case "COV_DIVERS":
-      return "D"
+      return ["D", "http://fhir.de/CodeSystem/gender-amtlich-de"]
     case "COV_UNBEKANNT":
-      return "unknown"
+      return ["unknown", "http://hl7.org/fhir/administrative-gender"]
     default:
-      return "unknown"
+      [null, null]
   }
 }
