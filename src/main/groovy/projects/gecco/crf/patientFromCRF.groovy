@@ -28,7 +28,7 @@ patient {
     return //no export
   }
 
-  //id = "Patient/Cxx-Patient-" + context.source[studyVisitItem().studyMember().patientContainer().id()]
+  id = "Patient/Cxx-Patient-" + context.source[studyVisitItem().studyMember().patientContainer().id()]
 
   meta {
     source = "https://fhir.centraxx.de"
@@ -39,8 +39,6 @@ patient {
   final def crfItemEthn = context.source[studyVisitItem().crf().items()].find {
     "COV_GECCO_ETHNISCHE_ZUGEHOERIGKEIT" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
   }
-
-  id = crfItemEthn
 
   if (crfItemEthn && crfItemEthn[CrfItem.CATALOG_ENTRY_VALUE] != []) {
     final def fields = getEthnicityInfo(crfItemEthn[CrfItem.CATALOG_ENTRY_VALUE][0][CatalogEntry.CODE] as String)
