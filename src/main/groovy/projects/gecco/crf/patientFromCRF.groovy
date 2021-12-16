@@ -6,6 +6,9 @@ import de.kairos.fhir.centraxx.metamodel.CrfItem
 import de.kairos.fhir.centraxx.metamodel.CrfTemplateField
 import de.kairos.fhir.centraxx.metamodel.LaborValue
 
+import java.time.LocalDate
+import java.time.Period
+
 import static de.kairos.fhir.centraxx.metamodel.RootEntities.studyVisitItem
 
 /**
@@ -60,16 +63,17 @@ patient {
   }
 
   if (crfItemBirthdate) {
-    final def ageDate = crfItemBirthdate[CrfItem.DATE_VALUE]
+    final def birthDateStr = crfItemBirthdate[CrfItem.DATE_VALUE].toString().substring(6, 16)
+    final def currentDateStr = normalizeDate(context.source[studyVisitItem().crf().lastChangedOn()] as String)
     extension {
       extension {
         url = "dateTimeOfDocumentation"
-        valueDateTime = normalizeDate(context.source[studyVisitItem().crf().creationDate()] as String)
+        valueDateTime = currentDateStr
       }
       extension {
         url = "age"
         valueAge {
-          value = computeAge(ageDate as String)
+          value = computeAge(birthDateStr, currentDateStr)
           system = "http://unitsofmeasure.org"
           code = "a"
           unit = "years"
@@ -77,7 +81,7 @@ patient {
       }
       url = "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/age"
     }
-    birthDate = ageDate.toString().substring(6, 16)
+    birthDate = birthDateStr
   }
 
   active = context.source[studyVisitItem().studyMember().patientContainer().patientStatus()]
@@ -109,10 +113,16 @@ static String normalizeDate(final String dateTimeString) {
 }
 
 //Compute age of patient from birthdate
-static int computeAge(final String dateString) {
-  final int now = Calendar.getInstance().get(Calendar.YEAR)
-  final int doe = dateString.substring(6, 10).toInteger()
-  return now - doe
+static int computeAge(final String startDateString, final String endDateString) {
+
+  String[] startStr = startDateString.split("-")
+  String[] endStr = endDateString.split("-")
+
+  LocalDate startDate = LocalDate.of(startStr[0] as int, startStr[1] as int, startStr[2] as int )
+  LocalDate endsDate = LocalDate.of(endStr[0] as int, endStr[1] as int, endStr[2] as int )
+
+  return Period.between(startDate, endsDate).years
+
 }
 
 //Function to map ethnicities
