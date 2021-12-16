@@ -5,6 +5,7 @@ import de.kairos.fhir.centraxx.metamodel.CrfItem
 import de.kairos.fhir.centraxx.metamodel.CrfTemplateField
 import de.kairos.fhir.centraxx.metamodel.LaborValue
 import org.hl7.fhir.r4.model.Consent
+import org.hl7.fhir.r4.model.DateTimeType
 
 import static de.kairos.fhir.centraxx.metamodel.RootEntities.studyVisitItem
 
@@ -58,6 +59,13 @@ consent {
       reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().id()]
     }
 
+    dateTime = getCurrentDate()
+
+    //TODO: Check policy
+    policy{
+      uri = "https://www.aerzteblatt.de/archiv/65440/DNR-Anordnungen-Das-fehlende-Bindeglied"
+    }
+
     provision {
 
       type = Consent.ConsentProvisionType.PERMIT
@@ -88,4 +96,9 @@ static String mapDNR(final String resp) {
       return "261665006"
     default: null
   }
+}
+
+static DateTimeType getCurrentDate(){
+  def calendar = Calendar.getInstance()
+  return new DateTimeType("" + calendar.get(Calendar.YEAR) + "-" + (calendar.get(Calendar.MONTH) + 1) + "-" + calendar.get(Calendar.DAY_OF_MONTH))
 }
