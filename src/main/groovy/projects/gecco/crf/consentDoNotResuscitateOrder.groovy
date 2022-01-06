@@ -61,7 +61,6 @@ consent {
 
     dateTime = getCurrentDate()
 
-    //TODO: Check policy
     policy{
       uri = "https://www.aerzteblatt.de/archiv/65440/DNR-Anordnungen-Das-fehlende-Bindeglied"
     }
@@ -73,10 +72,11 @@ consent {
       code {
         crfItemDNR[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item ->
           final def DNRcode = mapDNR(item[CatalogEntry.CODE] as String)
-          if (DNRcode) {
+          if (DNRcode[0]) {
             coding {
               system = "http://snomed.info/sct"
-              code = DNRcode
+              code = DNRcode[0]
+              display = DNRcode[1]
             }
           }
         }
@@ -86,19 +86,21 @@ consent {
 }
 
 
-static String mapDNR(final String resp) {
+static String[] mapDNR(final String resp) {
   switch (resp) {
     case ("COV_JA"):
-      return "304252001"
+      return ["304253006", "Not for resuscitation (finding)"]
     case ("COV_NEIN"):
-      return "304253006"
+      return ["304252001", "For resuscitation (finding)"]
     case ("COV_UMG_UNBEKANNT"):
-      return "261665006"
-    default: null
+      return ["261665006", "Unknown (qualifier value)"]
+    default: [null, null]
   }
 }
 
 static DateTimeType getCurrentDate(){
   def calendar = Calendar.getInstance()
-  return new DateTimeType("" + calendar.get(Calendar.YEAR) + "-" + (calendar.get(Calendar.MONTH) + 1) + "-" + calendar.get(Calendar.DAY_OF_MONTH))
+  return new DateTimeType("" + calendar.get(Calendar.YEAR) + "-" +
+          String.format("%02d", (calendar.get(Calendar.MONTH) + 1)) + "-" +
+          String.format("%02d", (calendar.get(Calendar.DAY_OF_MONTH))))
 }
