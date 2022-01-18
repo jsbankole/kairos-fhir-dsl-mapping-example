@@ -248,7 +248,77 @@
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      "transformByTemplate": "observationHistoryOfTravel",
+      "transformByTemplate": "observationHistoryOfTravel_0",
+      "exportToFhirResource": "Observation"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "observationHistoryOfTravel_1",
+      "exportToFhirResource": "Observation"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "observationHistoryOfTravel_2",
+      "exportToFhirResource": "Observation"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "observationHistoryOfTravel_3",
+      "exportToFhirResource": "Observation"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "observationHistoryOfTravel_4",
+      "exportToFhirResource": "Observation"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "observationHistoryOfTravel_5",
+      "exportToFhirResource": "Observation"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "observationHistoryOfTravel_6",
+      "exportToFhirResource": "Observation"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "observationHistoryOfTravel_7",
+      "exportToFhirResource": "Observation"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "observationHistoryOfTravel_8",
+      "exportToFhirResource": "Observation"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "observationHistoryOfTravel_9",
+      "exportToFhirResource": "Observation"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "observationHistoryOfTravel_10",
+      "exportToFhirResource": "Observation"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "observationHistoryOfTravel_11",
+      "exportToFhirResource": "Observation"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "observationHistoryOfTravel_12",
+      "exportToFhirResource": "Observation"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "observationHistoryOfTravel_13",
+      "exportToFhirResource": "Observation"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "observationHistoryOfTravel_14",
       "exportToFhirResource": "Observation"
     },
     {
