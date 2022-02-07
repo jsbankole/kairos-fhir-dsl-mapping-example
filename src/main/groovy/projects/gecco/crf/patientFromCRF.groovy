@@ -31,7 +31,8 @@ patient {
     return //no export
   }
 
-  id = "Patient/Cxx-Patient-" + context.source[studyVisitItem().studyMember().patientContainer().id()]
+  id = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {
+    "MPI" == it["idContainerType"]?.getAt("code")}["psn"]
 
   meta {
     source = "https://fhir.centraxx.de"
