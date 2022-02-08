@@ -56,7 +56,7 @@ consent {
     }
 
     patient {
-      reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().id()]
+      reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
     }
 
     dateTime = getCurrentDate()

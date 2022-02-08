@@ -11,6 +11,7 @@ import de.kairos.fhir.centraxx.metamodel.StudyMember
 import org.hl7.fhir.r4.model.Observation
 
 import static de.kairos.fhir.centraxx.metamodel.RootEntities.laborMapping
+import static de.kairos.fhir.centraxx.metamodel.RootEntities.studyVisitItem
 
 /**
  * Represented by a CXX StudyVisitItem
@@ -39,7 +40,6 @@ observation {
     return
   }
 
-
   id = "Observation/HeartRate-" + context.source[laborMapping().id()]
 
   meta {
@@ -67,11 +67,9 @@ observation {
     }
   }
 
-  //Iteration to remove "[]" from id in string
-  context.source[laborMapping().relatedPatient().idContainer().id()].each { final id ->
-    subject {
-      reference = "Patient/Patient-" + id
-    }
+  subject {
+    reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.\
+            find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
   }
 
   effectiveDateTime {

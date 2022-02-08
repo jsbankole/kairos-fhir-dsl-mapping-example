@@ -51,7 +51,7 @@ observation {
       }
     }
     system = "http://www.acme.com/identifiers/patient"
-    value = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().id()]
+    value = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
     assigner {
       reference = "Assigner/" + context.source[studyVisitItem().creator().id()]
     }
@@ -82,7 +82,7 @@ observation {
   }
 
   subject {
-    reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().id()]
+    reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
   }
 
   final def valIndex = []
