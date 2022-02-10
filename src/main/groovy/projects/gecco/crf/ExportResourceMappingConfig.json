@@ -1,519 +1,519 @@
 {
-  "description": "This configuration links a CentraXX entity (selectFromCxxEntity) to a FHIR resource (exportToFhirResource) by conversion through a transformation template ("Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]). Only the template can be changed. The same entity can be configured to the same FHIR resource by multiple templates. The configuration can be changed during runtime without CentraXX restart. The mapping order is important, if the target system checks referential integrity (e.g. blaze store).",
+  "description": "This configuration links a CentraXX entity (selectFromCxxEntity) to a FHIR resource (exportToFhirResource) by conversion through a transformation template (transformByTemplate). Only the template can be changed. The same entity can be configured to the same FHIR resource by multiple templates. The configuration can be changed during runtime without CentraXX restart. The mapping order is important, if the target system checks referential integrity (e.g. blaze store).",
   "mappings": [
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "patientFromCRF",
+      "transformByTemplate": "patientFromCRF",
       "exportToFhirResource": "Patient"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionCardiovascularDisease_bluthochdruck",
+      "transformByTemplate": "conditionCardiovascularDisease_bluthochdruck",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionCardiovascularDisease_herzinfarkt",
+      "transformByTemplate": "conditionCardiovascularDisease_herzinfarkt",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionCardiovascularDisease_herzrhythmusstoerungen",
+      "transformByTemplate": "conditionCardiovascularDisease_herzrhythmusstoerungen",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionCardiovascularDisease_herzinsuffizienz",
+      "transformByTemplate": "conditionCardiovascularDisease_herzinsuffizienz",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionCardiovascularDisease_pavk",
+      "transformByTemplate": "conditionCardiovascularDisease_pavk",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionCardiovascularDisease_revaskularisation",
+      "transformByTemplate": "conditionCardiovascularDisease_revaskularisation",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionCardiovascularDisease_koronareherzkrankheit",
+      "transformByTemplate": "conditionCardiovascularDisease_koronareherzkrankheit",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionCardiovascularDisease_carotisstenose",
+      "transformByTemplate": "conditionCardiovascularDisease_carotisstenose",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionLiverDisease_fettleber",
+      "transformByTemplate": "conditionLiverDisease_fettleber",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionLiverDisease_leberzirrhose",
+      "transformByTemplate": "conditionLiverDisease_leberzirrhose",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionLiverDisease_hepatitis",
+      "transformByTemplate": "conditionLiverDisease_hepatitis",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionLiverDisease_autoimmunelebererkrankungen",
+      "transformByTemplate": "conditionLiverDisease_autoimmunelebererkrankungen",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionChronicLungDisease_asthma",
+      "transformByTemplate": "conditionChronicLungDisease_asthma",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionChronicLungDisease_copd",
+      "transformByTemplate": "conditionChronicLungDisease_copd",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionChronicLungDisease_lungenfibrose",
+      "transformByTemplate": "conditionChronicLungDisease_lungenfibrose",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionChronicLungDisease_lungenhochdruck",
+      "transformByTemplate": "conditionChronicLungDisease_lungenhochdruck",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionChronicLungDisease_ohs",
+      "transformByTemplate": "conditionChronicLungDisease_ohs",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionChronicLungDisease_schlafapnoe",
+      "transformByTemplate": "conditionChronicLungDisease_schlafapnoe",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionChronicLungDisease_osas",
+      "transformByTemplate": "conditionChronicLungDisease_osas",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionChronicLungDisease_cystischefibrose",
+      "transformByTemplate": "conditionChronicLungDisease_cystischefibrose",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionNeuroDisease_chronischeneurologischeerkrankung",
+      "transformByTemplate": "conditionNeuroDisease_chronischeneurologischeerkrankung",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionNeuroDisease_psychiatrischeerkrankung",
+      "transformByTemplate": "conditionNeuroDisease_psychiatrischeerkrankung",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionNeuroDisease_angsterkrankung",
+      "transformByTemplate": "conditionNeuroDisease_angsterkrankung",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionNeuroDisease_depression",
+      "transformByTemplate": "conditionNeuroDisease_depression",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionNeuroDisease_psychose",
+      "transformByTemplate": "conditionNeuroDisease_psychose",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionNeuroDisease_parkinson",
+      "transformByTemplate": "conditionNeuroDisease_parkinson",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionNeuroDisease_demenz",
+      "transformByTemplate": "conditionNeuroDisease_demenz",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionNeuroDisease_multiplesklerose",
+      "transformByTemplate": "conditionNeuroDisease_multiplesklerose",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionNeuroDisease_neuromuskulaereerkrankungen",
+      "transformByTemplate": "conditionNeuroDisease_neuromuskulaereerkrankungen",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionNeuroDisease_epilepsie",
+      "transformByTemplate": "conditionNeuroDisease_epilepsie",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionNeuroDisease_migraene",
+      "transformByTemplate": "conditionNeuroDisease_migraene",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionNeuroDisease_apoplexmitresiduen",
+      "transformByTemplate": "conditionNeuroDisease_apoplexmitresiduen",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionNeuroDisease_apoplexohneresiduen",
+      "transformByTemplate": "conditionNeuroDisease_apoplexohneresiduen",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionRheumaImunoDisease_chronischentzuendlichedarmerkrankung",
+      "transformByTemplate": "conditionRheumaImunoDisease_chronischentzuendlichedarmerkrankung",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionRheumaImunoDisease_rheumatoidearthritis",
+      "transformByTemplate": "conditionRheumaImunoDisease_rheumatoidearthritis",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionRheumaImunoDisease_kollagenosen",
+      "transformByTemplate": "conditionRheumaImunoDisease_kollagenosen",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionRheumaImunoDisease_vaskulitis",
+      "transformByTemplate": "conditionRheumaImunoDisease_vaskulitis",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionRheumaImunoDisease_angeboreneimmundefekte",
+      "transformByTemplate": "conditionRheumaImunoDisease_angeboreneimmundefekte",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionRheumaImunoDisease_rheumatologischeerkrankung",
+      "transformByTemplate": "conditionRheumaImunoDisease_rheumatologischeerkrankung",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionRheumaImunoDisease_immunologischeerkrankung",
+      "transformByTemplate": "conditionRheumaImunoDisease_immunologischeerkrankung",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionHIV",
+      "transformByTemplate": "conditionHIV",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionOrganRecipient",
+      "transformByTemplate": "conditionOrganRecipient",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionDiabetesMellitus",
+      "transformByTemplate": "conditionDiabetesMellitus",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionMalignantNeoplasticDisease",
+      "transformByTemplate": "conditionMalignantNeoplasticDisease",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionChronicKidneyDisease",
+      "transformByTemplate": "conditionChronicKidneyDisease",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionGastrointestinalUlcers",
+      "transformByTemplate": "conditionGastrointestinalUlcers",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "observationSmokingStatus",
+      "transformByTemplate": "observationSmokingStatus",
       "exportToFhirResource": "Observation"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "procedureRespiratoryTherapies",
+      "transformByTemplate": "procedureRespiratoryTherapies",
       "exportToFhirResource": "Procedure"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "observationHistoryOfTravel_0",
+      "transformByTemplate": "observationHistoryOfTravel_0",
       "exportToFhirResource": "Observation"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "observationHistoryOfTravel_1",
+      "transformByTemplate": "observationHistoryOfTravel_1",
       "exportToFhirResource": "Observation"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "observationHistoryOfTravel_2",
+      "transformByTemplate": "observationHistoryOfTravel_2",
       "exportToFhirResource": "Observation"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "observationHistoryOfTravel_3",
+      "transformByTemplate": "observationHistoryOfTravel_3",
       "exportToFhirResource": "Observation"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "observationHistoryOfTravel_4",
+      "transformByTemplate": "observationHistoryOfTravel_4",
       "exportToFhirResource": "Observation"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "observationHistoryOfTravel_5",
+      "transformByTemplate": "observationHistoryOfTravel_5",
       "exportToFhirResource": "Observation"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "observationHistoryOfTravel_6",
+      "transformByTemplate": "observationHistoryOfTravel_6",
       "exportToFhirResource": "Observation"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "observationHistoryOfTravel_7",
+      "transformByTemplate": "observationHistoryOfTravel_7",
       "exportToFhirResource": "Observation"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "observationHistoryOfTravel_8",
+      "transformByTemplate": "observationHistoryOfTravel_8",
       "exportToFhirResource": "Observation"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "observationHistoryOfTravel_9",
+      "transformByTemplate": "observationHistoryOfTravel_9",
       "exportToFhirResource": "Observation"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "observationHistoryOfTravel_10",
+      "transformByTemplate": "observationHistoryOfTravel_10",
       "exportToFhirResource": "Observation"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "observationHistoryOfTravel_11",
+      "transformByTemplate": "observationHistoryOfTravel_11",
       "exportToFhirResource": "Observation"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "observationHistoryOfTravel_12",
+      "transformByTemplate": "observationHistoryOfTravel_12",
       "exportToFhirResource": "Observation"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "observationHistoryOfTravel_13",
+      "transformByTemplate": "observationHistoryOfTravel_13",
       "exportToFhirResource": "Observation"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "observationHistoryOfTravel_14",
+      "transformByTemplate": "observationHistoryOfTravel_14",
       "exportToFhirResource": "Observation"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "observationInterventionalClinicalTrialParticipation",
+      "transformByTemplate": "observationInterventionalClinicalTrialParticipation",
       "exportToFhirResource": "Observation"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "immunizationHistoryOfVaccination",
+      "transformByTemplate": "immunizationHistoryOfVaccination",
       "exportToFhirResource": "Immunization"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "consentDoNotResuscitateOrder",
+      "transformByTemplate": "consentDoNotResuscitateOrder",
       "exportToFhirResource": "Consent"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "procedureRadiologyProcedures",
+      "transformByTemplate": "procedureRadiologyProcedures",
       "exportToFhirResource": "Procedure"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "diagnosticReportRadiology",
+      "transformByTemplate": "diagnosticReportRadiology",
       "exportToFhirResource": "DiagnosticReport"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "observationPregnancyStatus",
+      "transformByTemplate": "observationPregnancyStatus",
       "exportToFhirResource": "Observation"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "observationSexAssignedAtBirth",
+      "transformByTemplate": "observationSexAssignedAtBirth",
       "exportToFhirResource": "Observation"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "observationFrailtyScore",
+      "transformByTemplate": "observationFrailtyScore",
       "exportToFhirResource": "Observation"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "observationBodyWeight",
+      "transformByTemplate": "observationBodyWeight",
       "exportToFhirResource": "Observation"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "observationBodyHeight",
+      "transformByTemplate": "observationBodyHeight",
       "exportToFhirResource": "Observation"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "observationKnownExposure",
+      "transformByTemplate": "observationKnownExposure",
       "exportToFhirResource": "Observation"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionComplicationsOfCovid_thrombo",
+      "transformByTemplate": "conditionComplicationsOfCovid_thrombo",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionComplicationsOfCovid_pulmonale",
+      "transformByTemplate": "conditionComplicationsOfCovid_pulmonale",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionComplicationsOfCovid_blutstrominf",
+      "transformByTemplate": "conditionComplicationsOfCovid_blutstrominf",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionStageAtDiagnosis",
+      "transformByTemplate": "conditionStageAtDiagnosis",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "medicationStatementPharmacologicalTherapy",
+      "transformByTemplate": "medicationStatementPharmacologicalTherapy",
       "exportToFhirResource": "MedicationStatement"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "medicationStatementACEHemmer",
+      "transformByTemplate": "medicationStatementACEHemmer",
       "exportToFhirResource": "MedicationStatement"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "medicationStatementImmunoglobulins",
+      "transformByTemplate": "medicationStatementImmunoglobulins",
       "exportToFhirResource": "MedicationStatement"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "medicationStatementAnticoagulants",
+      "transformByTemplate": "medicationStatementAnticoagulants",
       "exportToFhirResource": "MedicationStatement"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionDependenceOnVentilator",
+      "transformByTemplate": "conditionDependenceOnVentilator",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "observationSarsCov2RT_PCR",
+      "transformByTemplate": "observationSarsCov2RT_PCR",
       "exportToFhirResource": "Observation"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "observationStudyInclusionDueToCovid19",
+      "transformByTemplate": "observationStudyInclusionDueToCovid19",
       "exportToFhirResource": "Observation"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "procedureDialyseHaemofiltration",
+      "transformByTemplate": "procedureDialyseHaemofiltration",
       "exportToFhirResource": "Procedure"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "procedureApharesis",
+      "transformByTemplate": "procedureApharesis",
       "exportToFhirResource": "Procedure"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "procedurePronePosition",
+      "transformByTemplate": "procedurePronePosition",
       "exportToFhirResource": "Procedure"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "procedureECMO",
+      "transformByTemplate": "procedureECMO",
       "exportToFhirResource": "Procedure"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "observationPatientInICU",
+      "transformByTemplate": "observationPatientInICU",
       "exportToFhirResource": "Observation"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "observationDischargeDisposition",
+      "transformByTemplate": "observationDischargeDisposition",
       "exportToFhirResource": "Observation"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "procedureVentilationType",
+      "transformByTemplate": "procedureVentilationType",
       "exportToFhirResource": "Procedure"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionSymptomsOfCovid_bauchschmerzen",
+      "transformByTemplate": "conditionSymptomsOfCovid_bauchschmerzen",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionSymptomsOfCovid_durchfall",
+      "transformByTemplate": "conditionSymptomsOfCovid_durchfall",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionSymptomsOfCovid_erbrechen",
+      "transformByTemplate": "conditionSymptomsOfCovid_erbrechen",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionSymptomsOfCovid_fieber",
+      "transformByTemplate": "conditionSymptomsOfCovid_fieber",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionSymptomsOfCovid_geruch",
+      "transformByTemplate": "conditionSymptomsOfCovid_geruch",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionSymptomsOfCovid_husten",
+      "transformByTemplate": "conditionSymptomsOfCovid_husten",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionSymptomsOfCovid_kopfschmerzen",
+      "transformByTemplate": "conditionSymptomsOfCovid_kopfschmerzen",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionSymptomsOfCovid_kurzatmig",
+      "transformByTemplate": "conditionSymptomsOfCovid_kurzatmig",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionSymptomsOfCovid_uebelkeit",
+      "transformByTemplate": "conditionSymptomsOfCovid_uebelkeit",
       "exportToFhirResource": "Condition"
     },
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      ""Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]": "conditionSymptomsOfCovid_verwirrt",
+      "transformByTemplate": "conditionSymptomsOfCovid_verwirrt",
       "exportToFhirResource": "Condition"
     }
   ]
