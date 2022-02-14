@@ -1,0 +1,25 @@
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "observationPregnancyStatus",
+      "exportToFhirResource": "Observation"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "observationSexAssignedAtBirth",
+      "exportToFhirResource": "Observation"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "observationFrailtyScore",
+      "exportToFhirResource": "Observation"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "observationBodyWeight",
+      "exportToFhirResource": "Observation"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "observationBodyHeight",
+      "exportToFhirResource": "Observation"
+    }

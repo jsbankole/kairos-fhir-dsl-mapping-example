@@ -37,7 +37,7 @@ file_name_root_list.append("conditionRheumaImunoDisease_")
 ##############################################
 
 # Auxiliar file with excerpt for ExportResourceMappingConfig
-aux_file_name = "aux_ExportResourceMappingConfig.txt"
+aux_file_name = "partial_ExportResourceMappingConfig.txt"
 if os.path.exists(aux_file_name):
     os.remove(aux_file_name)
 

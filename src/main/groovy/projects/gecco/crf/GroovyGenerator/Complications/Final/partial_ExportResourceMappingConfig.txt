@@ -1,0 +1,15 @@
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionComplicationsOfCovid_thrombo",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionComplicationsOfCovid_pulmonale",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionComplicationsOfCovid_blutstrominf",
+      "exportToFhirResource": "Condition"
+    }

@@ -1,0 +1,30 @@
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "procedureDialyseHaemofiltration",
+      "exportToFhirResource": "Procedure"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "procedureApharesis",
+      "exportToFhirResource": "Procedure"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "procedurePronePosition",
+      "exportToFhirResource": "Procedure"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "procedureECMO",
+      "exportToFhirResource": "Procedure"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "observationPatientInICU",
+      "exportToFhirResource": "Observation"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "procedureVentilationType",
+      "exportToFhirResource": "Procedure"
+    }

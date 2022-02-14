@@ -1,0 +1,5 @@
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "patientFromCRF",
+      "exportToFhirResource": "Patient"
+    }
