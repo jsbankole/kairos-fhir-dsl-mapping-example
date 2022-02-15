@@ -22,4 +22,14 @@
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
       "transformByTemplate": "consentDoNotResuscitateOrder",
       "exportToFhirResource": "Consent"
-    }
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionMalignantNeoplasticDisease_Active",
+      "exportToFhirResource": "Condition"
+    },
+    {
+      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "transformByTemplate": "conditionMalignantNeoplasticDisease_Remission",
+      "exportToFhirResource": "Condition"
+    },

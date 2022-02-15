@@ -1,4 +1,4 @@
-package projects.gecco.crf
+package projects.gecco.crf.GroovyGenerator.Anamnesis.Constant
 
 import ca.uhn.fhir.model.api.TemporalPrecisionEnum
 import de.kairos.fhir.centraxx.metamodel.CatalogEntry
@@ -27,60 +27,79 @@ condition {
     return //no export
   }
   final def crfItemCancer = context.source[studyVisitItem().crf().items()].find {
-    "COV_GECCO_TUMORERKRANKUNG" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
+    "COV_GECCO_TUMORERKRANKUNG_REMISSION" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
   }
   if (!crfItemCancer){
     return
   }
   if (crfItemCancer[CrfItem.CATALOG_ENTRY_VALUE] != []) {
-    id = "Condition/MalignantNeoplasticDisease-" + context.source[studyVisitItem().crf().id()]
+    id = "Condition/MalignantNeoplasticDiseaseRemission-" + context.source[studyVisitItem().crf().id()]
 
     meta {
       source = "https://fhir.centraxx.de"
       profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/malignant-neoplastic-disease"
     }
 
-    extension {
-      url = "https://simplifier.net/forschungsnetzcovid-19/uncertaintyofpresence"
-      valueCodeableConcept {
-        coding {
-          system = "http://snomed.info/sct"
-          code = "261665006"
-        }
-      }
-    }
-
-
     crfItemCancer[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item ->
-      final def clinicalStatusCode = matchResponseToClinicalStatus(item[CatalogEntry.CODE] as String)
-      if (clinicalStatusCode) {
+      final def statusCode = item[CatalogEntry.CODE] as String
+
+      if (statusCode == "COV_JA") {
         clinicalStatus {
-          coding{
+          coding {
             system = "http://terminology.hl7.org/CodeSystem/condition-clinical"
-            code = clinicalStatusCode
+            code = "remission"
+            display = "Remission"
           }
         }
-      }
-    }
-    crfItemCancer[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item ->
-      final def verificationStatusCode = matchResponseToVerificationStatus(item[CatalogEntry.CODE] as String)
-      if (verificationStatusCode) {
+
         verificationStatus {
-          coding{
+          coding {
             system = "http://snomed.info/sct"
-            code = verificationStatusCode
+            code = "410605003"
+            display = "Confirmed present (qualifier value)"
           }
           coding {
             system = "http://terminology.hl7.org/CodeSystem/condition-ver-status"
-            code = matchResponseToVerificationStatusHL7(item[CatalogEntry.CODE] as String)
+            code = "confirmed"
+            display = "Confirmed"
+          }
+        }
+
+      } else if(statusCode == "COV_NEIN"){
+        verificationStatus {
+          coding {
+            system = "http://snomed.info/sct"
+            code = "410594000"
+            display = "Definitely NOT present (qualifier value)"
+          }
+          coding {
+            system = "http://terminology.hl7.org/CodeSystem/condition-ver-status"
+            code = "refuted"
+            display = "Refuted"
+          }
+        }
+
+      } else if(statusCode == "COV_UNBEKANNT"){
+        // Unbekannt
+        extension {
+          url = "https://simplifier.net/forschungsnetzcovid-19/uncertaintyofpresence"
+          valueCodeableConcept {
+            coding {
+              system = "http://snomed.info/sct"
+              code = "261665006"
+              display = "Unknown (qualifier value)"
+            }
+            text = "Presence of condition is unknown."
           }
         }
       }
     }
+
     category {
       coding {
         system = "http://snomed.info/sct"
         code = "394593009"
+        display = "Medical oncology (qualifier value)"
       }
     }
 
@@ -102,49 +121,6 @@ condition {
     }
   }
 }
-
-
-static String matchResponseToClinicalStatus(final String resp) {
-  switch (resp) {
-    case ("COV_AKTIV"):
-      return "active"
-    case ("COV_REMISSION"):
-      return "remission"
-    default: null
-  }
-}
-static String matchResponseToVerificationStatus(final String resp) {
-  switch (resp) {
-    case ("COV_AKTIV"):
-      return "410605003"
-    case ("COV_REMISSION"):
-      return "410605003"
-    case ("COV_NO"):
-      return "410594000"
-    case ("COV_UNKNOWN"):
-      return "261665006"
-    default: null
-  }
-}
-static String matchResponseToVerificationStatusHL7(final String resp) {
-  switch (resp) {
-    case ("COV_AKTIV"):
-      return "confirmed"
-    case ("COV_REMISSION"):
-      return "confirmed"
-    case ("COV_NO"):
-      return "refuted"
-    case ("COV_UNKNOWN"):
-      return "unconfirmed"
-    default: null
-  }
-}
-
-
-
-
-
-
 
 static String normalizeDate(final String dateTimeString) {
   return dateTimeString != null ? dateTimeString.substring(0, 10) : null
