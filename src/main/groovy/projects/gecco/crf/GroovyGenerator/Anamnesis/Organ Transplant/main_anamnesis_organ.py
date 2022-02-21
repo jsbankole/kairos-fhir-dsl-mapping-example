@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import shutil
 
 src = f"./GroovyGenerator/Anamnesis/Organ Transplant/"
 dest = f"./GroovyGenerator/Anamnesis/Final/"
@@ -12,6 +13,24 @@ file_name_root = "conditionOrganRecipient_"
 aux_file_name = dest + "partial_ExportResourceMappingConfig.txt"
 
 
+# Deal with General File
+general_file_name = "conditionOrganRecipient_General"
+
+# Add export string
+with open(aux_file_name, "a") as f:
+    append_str = f""",
+    {{
+        "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+        "transformByTemplate": "{general_file_name}",
+        "exportToFhirResource": "Condition"
+    }}"""
+    f.write(append_str)
+
+# Copy general to Final
+shutil.copy(src + general_file_name + ".groovy", dest)
+
+
+# Deal with auto generated files
 # Load corresponding template file as a string
 with open(src + template_file, "r") as f:
     templateString = f.read()
@@ -21,7 +40,7 @@ values_df = pd.read_excel(src + values_file)
 values_df = values_df.replace(np.nan, '')
 
 # Fields to replace in template (name of column in the excel)
-available_fields = ["ParameterCodeDisease", "IdComplement", "ICDCode", "DiseaseName-EN", "SnomedCode"]
+available_fields = ["ParameterCodeOrgan", "IdComplement", "ICDCode", "OrganName-EN", "SnomedCode"]
 
 # Iterate over the diseases from the excel file
 for _, row in values_df.iterrows():
