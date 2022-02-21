@@ -37,10 +37,10 @@ condition {
     return
   }
 
-  final def VERcode = matchResponseToVerificationStatus(crfItem[CrfItem.CATALOG_ENTRY_VALUE][0][CatalogEntry.CODE] as String)
+  final def VERcode = crfItem[CrfItem.CATALOG_ENTRY_VALUE][0][CatalogEntry.CODE]
 
   // Organ Transplant confirmed - If confirmed, then no need for general
-  if(VERcode == matchResponseToVerificationStatus("COV_JA")){
+  if(VERcode == "COV_JA"){
     return
   }
 
@@ -52,7 +52,7 @@ condition {
   }
 
   // Organ Transplant confirmed Absense
-  if (VERcode == matchResponseToVerificationStatus("COV_NEIN")) {
+  if (VERcode == "COV_NEIN") {
     verificationStatus {
       coding {
         system = "http://terminology.hl7.org/CodeSystem/condition-ver-status"
@@ -60,19 +60,19 @@ condition {
       }
       coding {
         system = "http://snomed.info/sct"
-        code = VERcode
+        code = matchResponseToVerificationStatusHL7("COV_NEIN")
         display = "Definitely NOT present (qualifier value)"
       }
     }
 
     // Organ Transplant presence unknown
-  } else if (VERcode == matchResponseToVerificationStatus("COV_UNBEKANNT")) {
+  } else if (VERcode == "COV_UNBEKANNT") {
     modifierExtension {
       url = "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/uncertainty-of-presence"
       valueCodeableConcept {
         coding {
           system = "http://snomed.info/sct"
-          code = VERcode
+          code = matchResponseToVerificationStatus("COV_UNBEKANNT")
           display = "Unknown (qualifier value)"
         }
         text =  "Presence of condition is unknown."

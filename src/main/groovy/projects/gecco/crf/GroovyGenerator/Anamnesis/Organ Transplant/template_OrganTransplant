@@ -33,10 +33,10 @@ condition {
       "COV_GECCO_ORGANTRANSPLANTATION" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
     }
 
-  final def VERcodeG = matchResponseToVerificationStatus(crfItemOrgan_General[CrfItem.CATALOG_ENTRY_VALUE][0][CatalogEntry.CODE])
+  final def VERcodeG = crfItemOrgan_General[CrfItem.CATALOG_ENTRY_VALUE][0][CatalogEntry.CODE]
 
   // Organ Transplant Absent confirmed
-  if (VERcodeG == matchResponseToVerificationStatus("COV_NEIN")) {
+  if (VERcodeG == "COV_NEIN") {
     return
   }
 
@@ -48,10 +48,10 @@ condition {
     return
   }
 
-  final def VERcode = matchResponseToVerificationStatus(crfItemOrgan[CrfItem.CATALOG_ENTRY_VALUE][0][CatalogEntry.CODE] as String)
+  final def VERcode = crfItemOrgan[CrfItem.CATALOG_ENTRY_VALUE][0][CatalogEntry.CODE]
 
   // Organ Transplant confirmed Absense
-  if (VERcode == matchResponseToVerificationStatus("COV_NEIN")) {
+  if (VERcode == "COV_NEIN") {
     return
   }
 
@@ -63,7 +63,7 @@ condition {
   }
 
   // Organ Transplant confirmed Present
-  if (VERcode == matchResponseToVerificationStatus("COV_JA")) {
+  if (VERcode == "COV_JA") {
 
     verificationStatus {
       coding {
@@ -72,18 +72,18 @@ condition {
       }
       coding {
         system = "http://snomed.info/sct"
-        code = VERcode
+        code = matchResponseToVerificationStatus("COV_JA")
       }
     }
 
     // Organ Transplant presence unknown
-  } else if (VERcode == matchResponseToVerificationStatus("COV_UNBEKANNT")) {
+  } else if (VERcode == "COV_UNBEKANNT") {
     modifierExtension {
       url = "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/uncertainty-of-presence"
       valueCodeableConcept {
         coding {
           system = "http://snomed.info/sct"
-          code = VERcode
+          code = matchResponseToVerificationStatus("COV_UNBEKANNT")
           display = "Unknown (qualifier value)"
         }
         text =  "Presence of condition is unknown."
