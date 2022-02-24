@@ -33,5 +33,5 @@ for i in range(nb_iterations):
         "selectFromCxxEntity": "STUDY_VISIT_ITEM",
         "transformByTemplate": "observationHistoryOfTravel_{i}",
         "exportToFhirResource": "Observation"
-    }}"""
+    }},"""
         f.write(append_str)

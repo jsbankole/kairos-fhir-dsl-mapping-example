@@ -38,10 +38,10 @@ for _, row in values_df.iterrows():
 
     # Add new file info to excerpt of ExportResourceMappingConfig
     with open(aux_file_name, "a") as f:
-        append_str = f""",
+        append_str = f"""
     {{
         "selectFromCxxEntity": "STUDY_VISIT_ITEM",
         "transformByTemplate": "{new_file_name}",
         "exportToFhirResource": "Condition"
-    }}"""
+    }},"""
         f.write(append_str)

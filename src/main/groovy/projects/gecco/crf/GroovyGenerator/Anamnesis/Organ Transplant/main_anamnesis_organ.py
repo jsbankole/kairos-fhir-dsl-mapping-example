@@ -18,12 +18,12 @@ general_file_name = "conditionOrganRecipient_General"
 
 # Add export string
 with open(aux_file_name, "a") as f:
-    append_str = f""",
+    append_str = f"""
     {{
         "selectFromCxxEntity": "STUDY_VISIT_ITEM",
         "transformByTemplate": "{general_file_name}",
         "exportToFhirResource": "Condition"
-    }}"""
+    }},"""
     f.write(append_str)
 
 # Copy general to Final

@@ -34,13 +34,12 @@ condition {
 
   String diabetesCode = crfItemGeneralDiab[CrfItem.CATALOG_ENTRY_VALUE][0][CatalogEntry.CODE]
 
-  if(diabetesCode != "COV_NEIN"){
+  final def crfItemDiab = context.source[studyVisitItem().crf().items()].find {
+    "##ParameterCodeDisease##" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
+  }
 
-    final def crfItemDiab = context.source[studyVisitItem().crf().items()].find {
-      "##ParameterCodeDisease##" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
-    }
-
-    diabetesCode = crfItemDiab[CrfItem.CATALOG_ENTRY_VALUE][0][CatalogEntry.CODE]
+  if(diabetesCode != "COV_NEIN" && (crfItemDiab == null || crfItemDiab[CrfItem.CATALOG_ENTRY_VALUE] == [])) {
+    return
   }
 
   id = "Condition/DiabetesMellitus_##IdComplement##_" +  context.source[studyVisitItem().crf().id()]
@@ -48,6 +47,10 @@ condition {
   meta {
     source = "https://fhir.centraxx.de"
     profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/diabetes-mellitus"
+  }
+
+  if(diabetesCode != "COV_NEIN"){
+    diabetesCode = crfItemDiab[CrfItem.CATALOG_ENTRY_VALUE][0][CatalogEntry.CODE]
   }
 
   // Unknown
