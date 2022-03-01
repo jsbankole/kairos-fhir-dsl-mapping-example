@@ -25,14 +25,14 @@ for file_name in src_files:
     if os.path.isfile(full_file_name):
         shutil.copy(full_file_name, dest)
 
+# Run Diabetes main file
+subprocess.run(['python', f"./GroovyGenerator/Anamnesis/Organ Transplant/main_anamnesis_diabetes.py"])
+
 # Run Diseases main file
 subprocess.run(['python', f"./GroovyGenerator/Anamnesis/Diseases/main_anamnesis_diseases.py"])
 
 # Run History of Travel main file
 subprocess.run(['python', f"./GroovyGenerator/Anamnesis/History of Travel/main_anamnesis_history_travel.py"])
-
-# Run Organ Transplant main file
-subprocess.run(['python', f"./GroovyGenerator/Anamnesis/Organ Transplant/main_anamnesis_diabetes.py"])
 
 # Run Organ Transplant main file
 subprocess.run(['python', f"./GroovyGenerator/Anamnesis/Organ Transplant/main_anamnesis_organ.py"])

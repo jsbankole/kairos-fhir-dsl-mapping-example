@@ -28,7 +28,7 @@ for i in range(nb_iterations):
 
     # Add new file info to excerpt of ExportResourceMappingConfig
     with open(aux_file_name, "a") as f:
-        append_str = f""",
+        append_str = f"""
     {{
         "selectFromCxxEntity": "STUDY_VISIT_ITEM",
         "transformByTemplate": "observationHistoryOfTravel_{i}",
