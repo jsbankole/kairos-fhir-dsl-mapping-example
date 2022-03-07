@@ -37,7 +37,7 @@ observation {
     "COV_GECCO_REISE" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
   }
 
-  if (!crfItemTravel) {
+  if (crfItemTravel[CrfItem.CATALOG_ENTRY_VALUE] == []) {
     return
   }
 
