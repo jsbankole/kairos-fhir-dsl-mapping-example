@@ -7,7 +7,7 @@ All files have the same content but with different iteration, which will corresp
 Has the string corresponding to the general code
 
 
-### generateHistoryTravel.py
+### main_anamnesis_HistoryTravel.py
 python file that generates the groovy files
 Only required to change the nb_iterations and path of the template
 The files are generated in the current directory

@@ -36,3 +36,6 @@ subprocess.run(['python', f"./GroovyGenerator/Anamnesis/History of Travel/main_a
 
 # Run Organ Transplant main file
 subprocess.run(['python', f"./GroovyGenerator/Anamnesis/Organ Transplant/main_anamnesis_organ.py"])
+
+# Run Immunization main file
+subprocess.run(['python', f"./GroovyGenerator/Anamnesis/Immunization/main_anamnesis_immunization.py"])
