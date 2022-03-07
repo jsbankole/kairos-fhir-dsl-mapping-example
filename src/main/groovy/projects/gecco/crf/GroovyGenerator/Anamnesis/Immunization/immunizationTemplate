@@ -1,0 +1,109 @@
+package projects.gecco.crf.GroovyGenerator.Anamnesis.Immuization
+
+import de.kairos.fhir.centraxx.metamodel.CatalogEntry
+import de.kairos.fhir.centraxx.metamodel.CrfItem
+import de.kairos.fhir.centraxx.metamodel.CrfTemplateField
+import de.kairos.fhir.centraxx.metamodel.LaborValue
+import de.kairos.fhir.centraxx.metamodel.PrecisionDate
+import org.hl7.fhir.r4.model.Immunization
+
+import static de.kairos.fhir.centraxx.metamodel.RootEntities.studyVisitItem
+
+/**
+ * Represented by a CXX StudyVisitItem
+ * Specified by https://simplifier.net/forschungsnetzcovid-19/immunization
+ * @author Lukas Reinert, Mike Wähnert
+ * @since KAIROS-FHIR-DSL.v.1.8.0, CXX.v.3.18.1
+ */
+immunization {
+  final def studyCode = context.source[studyVisitItem().studyMember().study().code()]
+  if (studyCode != "GECCO FINAL") {
+    return //no export
+  }
+
+  final def crfName = context.source[studyVisitItem().template().crfTemplate().name()]
+  final def studyVisitStatus = context.source[studyVisitItem().status()]
+  if (crfName != "SarsCov2_ANAMNESE / RISIKOFAKTOREN" || studyVisitStatus == "OPEN") {
+    return //no export
+  }
+
+  final def iter = ##iter##
+
+  final def crfItemImpf = context.source[studyVisitItem().crf().items()].findAll {
+    iter == it[CrfItem.VALUE_INDEX] as int && "COV_GECCO_IMPFUNGEN" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
+  }
+
+  final def crfItemImpfDatum = context.source[studyVisitItem().crf().items()].findAll {
+    iter == it[CrfItem.VALUE_INDEX] as int && "COV_GECCO_IMPFUNGEN_DATUM" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
+  }
+
+  if (!crfItemImpf || crfItemImpfDatum) {
+    return
+  }
+
+  final def vaccInfo = getVacInfo(crfItemImpf[CrfItem.CATALOG_ENTRY_VALUE][0][CatalogEntry.CODE][0] as String)
+
+  if(!vaccInfo[0]){
+    return
+  }
+
+  id = "Immunization/HistoryOfVaccination-" + context.source[studyVisitItem().id()]
+
+  meta {
+    source = "https://fhir.centraxx.de"
+    profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/immunization"
+  }
+
+  clinicalStatus = Immunization.ImmunizationStatus.COMPLETED
+
+  patient {
+    reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
+  }
+
+  vaccineCode {
+    coding {
+      system = "http://snomed.info/sct"
+      code = vaccInfo[0]
+      display = vaccInfo[1]
+    }
+  }
+
+  occurrenceDateTime {
+    date = normalizeDate(crfItemImpfDatum[CrfItem.DATE_VALUE][PrecisionDate.DATE][0] as String)
+  }
+
+//  protocolApplied {
+//    targetDisease {
+//      coding {
+//        system = "http://snomed.info/sct"
+//        code = "840539006"
+//        display = "Disease caused by Severe acute respiratory syndrome coronavirus 2 (disorder)"
+//      }
+//    }
+//  }
+
+}
+
+static String normalizeDate(final String dateTimeString) {
+  return dateTimeString != null ? dateTimeString.substring(0, 10) : null
+}
+
+static String[] getVacInfo(final String vaccCode){
+  switch (vaccCode) {
+    case ("COV_VACC_ASTRAZENECA"):
+      return ["29061000087103", "Vaccine product containing only recombinant non-replicating viral vector encoding Severe acute respiratory syndrome coronavirus 2 spike protein (medicinal product)"]
+    case ("COV_VACC_BIONTECH_PFIZER"):
+      return ["1119349007", "Vaccine product containing only Severe acute respiratory syndrome coronavirus 2 messenger ribonucleic acid (medicinal product)"]
+    case ("COV_VACC_GAMALEYA"):
+      return ["29061000087103", "Vaccine product containing only recombinant non-replicating viral vector encoding Severe acute respiratory syndrome coronavirus 2 spike protein (medicinal product)"]
+    case ("COV_VACC_JOHNSON"):
+      return ["29061000087103", "Vaccine product containing only recombinant non-replicating viral vector encoding Severe acute respiratory syndrome coronavirus 2 spike protein (medicinal product)"]
+    case ("COV_VACC_MODERNA"):
+      return ["1119349007", "Vaccine product containing only Severe acute respiratory syndrome coronavirus 2 messenger ribonucleic acid (medicinal product)"]
+    case ("COV_VACC_NOVAVAX"):
+      return ["1162643001", "Vaccine product containing only Severe acute respiratory syndrome coronavirus 2 recombinant spike protein antigen (medicinal product)"]
+    case ("COV_VACC_SINOVAC"):
+      return ["1157024006", "Vaccine product containing only inactivated whole Severe acute respiratory syndrome coronavirus 2 antigen (medicinal product)"]
+    default: [null, null]
+  }
+}
