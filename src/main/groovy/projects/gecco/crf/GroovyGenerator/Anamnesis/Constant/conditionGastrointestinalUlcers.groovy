@@ -42,13 +42,15 @@ condition {
     crfItemUlcer[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item ->
       final def VERcode = matchResponseToVerificationStatus(item[CatalogEntry.CODE] as String)
       if (VERcode == "261665006") {
-        extension {
-          url = "https://simplifier.net/forschungsnetzcovid-19/uncertaintyofpresence"
+        modifierExtension {
+          url = "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/uncertainty-of-presence"
           valueCodeableConcept {
             coding {
               system = "http://snomed.info/sct"
               code = "261665006"
+              display = "Unknown (qualifier value)"
             }
+            text = "Presence of condition is unknown."
           }
         }
       } else if (["410594000", "410605003"].contains(VERcode)) {
