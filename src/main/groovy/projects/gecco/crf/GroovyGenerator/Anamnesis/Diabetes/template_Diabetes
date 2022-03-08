@@ -55,8 +55,8 @@ condition {
 
   // Unknown
   if (diabetesCode == "COV_UNBEKANNT") {
-    extension {
-      url = "https://simplifier.net/forschungsnetzcovid-19/uncertaintyofpresence"
+    modifierExtension {
+      url = "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/uncertainty-of-presence"
       valueCodeableConcept {
         coding {
           system = "http://snomed.info/sct"

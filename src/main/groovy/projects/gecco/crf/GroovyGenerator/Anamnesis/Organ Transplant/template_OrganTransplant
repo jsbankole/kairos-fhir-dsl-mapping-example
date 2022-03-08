@@ -55,7 +55,7 @@ condition {
     return
   }
 
-  id = "Condition/ChronicCardiovascularDisease-##IdComplement##-" + context.source[studyVisitItem().crf().id()]
+  id = "Condition/OrganRecipient-##IdComplement##-" + context.source[studyVisitItem().crf().id()]
 
   meta {
     source = "https://fhir.centraxx.de"

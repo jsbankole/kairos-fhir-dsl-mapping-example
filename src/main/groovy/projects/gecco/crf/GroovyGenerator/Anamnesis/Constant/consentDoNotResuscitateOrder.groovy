@@ -92,7 +92,7 @@ static String[] mapDNR(final String resp) {
       return ["304253006", "Not for resuscitation (finding)"]
     case ("COV_NEIN"):
       return ["304252001", "For resuscitation (finding)"]
-    case ("COV_UMG_UNBEKANNT"):
+    case ("COV_UNBEKANNT"):
       return ["261665006", "Unknown (qualifier value)"]
     default: [null, null]
   }

@@ -54,6 +54,11 @@ condition {
     profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/chronic-liver-diseases"
   }
 
+  def VERcode = ""
+  if(VERcodeG != "COV_NEIN"){
+    VERcode = crfItemLiver[CrfItem.CATALOG_ENTRY_VALUE][0][CatalogEntry.CODE]
+  }
+
   // Disease confirmed Present
   if (VERcode == "COV_JA")
     verificationStatus {

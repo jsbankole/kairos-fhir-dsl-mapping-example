@@ -54,6 +54,11 @@ condition {
     profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/chronic-lung-diseases"
   }
 
+  def VERcode = ""
+  if(VERcodeG != "COV_NEIN"){
+    VERcode = crfItemLung[CrfItem.CATALOG_ENTRY_VALUE][0][CatalogEntry.CODE]
+  }
+
   // Disease confirmed Present
   if (VERcode == "COV_JA")
     verificationStatus {

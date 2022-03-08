@@ -81,8 +81,8 @@ condition {
 
       } else if(statusCode == "COV_UNBEKANNT"){
         // Unbekannt
-        extension {
-          url = "https://simplifier.net/forschungsnetzcovid-19/uncertaintyofpresence"
+        modifierExtension {
+          url = "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/uncertainty-of-presence"
           valueCodeableConcept {
             coding {
               system = "http://snomed.info/sct"

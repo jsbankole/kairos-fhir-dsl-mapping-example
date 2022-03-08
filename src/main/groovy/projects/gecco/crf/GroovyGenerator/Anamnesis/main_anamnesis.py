@@ -26,7 +26,7 @@ for file_name in src_files:
         shutil.copy(full_file_name, dest)
 
 # Run Diabetes main file
-subprocess.run(['python', f"./GroovyGenerator/Anamnesis/Organ Transplant/main_anamnesis_diabetes.py"])
+subprocess.run(['python', f"./GroovyGenerator/Anamnesis/Diabetes/main_anamnesis_diabetes.py"])
 
 # Run Diseases main file
 subprocess.run(['python', f"./GroovyGenerator/Anamnesis/Diseases/main_anamnesis_diseases.py"])
