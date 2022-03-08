@@ -26,6 +26,9 @@ for filename in os.listdir(dest):
 # Generate Anamnesis files
 subprocess.run(['python', f"./GroovyGenerator/Anamnesis/main_anamnesis.py"])
 
+# Generate Imaging files
+subprocess.run(['python', f"./GroovyGenerator/Imaging/main_imaging.py"])
+
 # Generate Remaining files
 # .... Add later ....
 
