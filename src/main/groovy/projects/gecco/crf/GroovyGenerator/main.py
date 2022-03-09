@@ -29,6 +29,9 @@ subprocess.run(['python', f"./GroovyGenerator/Anamnesis/main_anamnesis.py"])
 # Generate Imaging files
 subprocess.run(['python', f"./GroovyGenerator/Imaging/main_imaging.py"])
 
+# Generate Demographics files
+subprocess.run(['python', f"./GroovyGenerator/Demographics/main_demographics.py"])
+
 # Generate Remaining files
 # .... Add later ....
 

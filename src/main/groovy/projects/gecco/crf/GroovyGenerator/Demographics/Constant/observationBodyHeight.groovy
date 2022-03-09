@@ -54,11 +54,14 @@ observation {
       coding {
         system = "http://loinc.org"
         code = "8302-2"
+        display = "Body height"
       }
       coding {
         system = "http://snomed.info/sct"
         code = "248334005"
+        display = "Body height (observable entity)"
       }
+      text = "Body height"
     }
 
     subject {

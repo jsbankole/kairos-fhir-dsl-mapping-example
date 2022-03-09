@@ -2,7 +2,7 @@ import os
 import shutil
 import subprocess
 
-keyword = "Imaging"
+keyword = "Demographics"
 
 src = f"./GroovyGenerator/{keyword}/Constant"
 dest = f"./GroovyGenerator/{keyword}/Final"
@@ -25,5 +25,3 @@ for file_name in src_files:
     if os.path.isfile(full_file_name):
         shutil.copy(full_file_name, dest)
 
-# Run Imaging Procedure main file
-subprocess.run(['python', f"./GroovyGenerator/Imaging/ImagingProcedure/main_imaging_procedure.py"])
