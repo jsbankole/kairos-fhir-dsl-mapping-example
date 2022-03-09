@@ -38,6 +38,10 @@ subprocess.run(['python', f"./GroovyGenerator/Demographics/main_epidemiology.py"
 # Generate Complications files
 subprocess.run(['python', f"./GroovyGenerator/Complications/main_complications.py"])
 
+# Generate Onset of Illness files
+subprocess.run(['python', f"./GroovyGenerator/Onset of Illness/main_onset_illness.py"])
+
+
 # Generate Remaining files
 # .... Add later ....
 

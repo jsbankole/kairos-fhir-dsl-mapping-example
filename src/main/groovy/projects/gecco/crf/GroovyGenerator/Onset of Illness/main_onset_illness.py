@@ -1,7 +1,7 @@
 import os
 import shutil
 
-keyword = "Demographics"
+keyword = "Onset of Illness"
 
 src = f"./GroovyGenerator/{keyword}/Constant"
 dest = f"./GroovyGenerator/{keyword}/Final"
