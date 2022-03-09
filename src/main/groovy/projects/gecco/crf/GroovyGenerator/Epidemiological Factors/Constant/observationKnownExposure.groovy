@@ -34,47 +34,48 @@ observation {
   if (!crfItemExpo) {
     return
   }
-  if (crfItemExpo[CrfItem.CATALOG_ENTRY_VALUE] != []) {
-    id = "Observation/KnownExposure-" + context.source[studyVisitItem().id()]
+  if (crfItemExpo[CrfItem.CATALOG_ENTRY_VALUE] == []) {
+    return
+  }
+  id = "Observation/KnownExposure-" + context.source[studyVisitItem().id()]
 
-    meta {
-      source = "https://fhir.centraxx.de"
-      profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/known-exposure"
+  meta {
+    source = "https://fhir.centraxx.de"
+    profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/known-exposure"
+  }
+
+  status = Observation.ObservationStatus.UNKNOWN
+
+  category {
+    coding {
+      system = "http://terminology.hl7.org/CodeSystem/observation-category"
+      code = "social-history"
     }
+  }
 
-    status = Observation.ObservationStatus.UNKNOWN
-
-    category {
-      coding {
-        system = "http://terminology.hl7.org/CodeSystem/observation-category"
-        code = "social-history"
-      }
+  code {
+    coding {
+      system = "http://loinc.org"
+      code = "88636-6"
     }
+  }
 
-    code {
-      coding {
-        system = "http://loinc.org"
-        code = "88636-6"
-      }
-    }
+  subject {
+    reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
+  }
 
-    subject {
-      reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
-    }
+  effectiveDateTime {
+    date = normalizeDate(context.source[studyVisitItem().crf().creationDate()] as String)
+    precision = TemporalPrecisionEnum.DAY.toString()
+  }
 
-    effectiveDateTime {
-      date = normalizeDate(context.source[studyVisitItem().crf().creationDate()] as String)
-      precision = TemporalPrecisionEnum.DAY.toString()
-    }
-
-    valueCodeableConcept {
-      crfItemExpo[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item ->
-        final def SNOMEDcode = mapExpoSNOMED(item[CatalogEntry.CODE] as String)
-        if (SNOMEDcode) {
-          coding {
-            system = "http://snomed.info/sct"
-            code = SNOMEDcode
-          }
+  valueCodeableConcept {
+    crfItemExpo[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item ->
+      final def SNOMEDcode = mapExpoSNOMED(item[CatalogEntry.CODE] as String)
+      if (SNOMEDcode) {
+        coding {
+          system = "http://snomed.info/sct"
+          code = SNOMEDcode
         }
       }
     }

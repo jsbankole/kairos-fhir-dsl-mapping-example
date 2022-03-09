@@ -2,4 +2,4 @@
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
       "transformByTemplate": "observationKnownExposure",
       "exportToFhirResource": "Observation"
-    }
+    },
