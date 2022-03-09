@@ -1,5 +1,6 @@
 import os
 import shutil
+import subprocess
 
 keyword = "Complications"
 
@@ -23,3 +24,6 @@ for file_name in src_files:
     full_file_name = os.path.join(src, file_name)
     if os.path.isfile(full_file_name):
         shutil.copy(full_file_name, dest)
+
+# Run Events main file
+subprocess.run(['python', f"./GroovyGenerator/Complications/Events/main_complications_events.py"])
