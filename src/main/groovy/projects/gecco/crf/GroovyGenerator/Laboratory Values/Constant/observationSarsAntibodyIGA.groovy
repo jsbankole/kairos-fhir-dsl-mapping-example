@@ -37,18 +37,37 @@ observation {
   }
 
   final def labValAb = context.source[laborMapping().laborFinding().laborFindingLaborValues()].find {
-    "COV_GECCO_GECCO FINAL_IGG_IA" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
+    "COV_GECCO_SARS_COV_2_IGG_IA" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
   }
   if (!labValAb) {
     return
   }
 
+  def numVal =labValAb[LaborFindingLaborValue.NUMERIC_VALUE]
+  if (!numVal){
+    return
+  }
 
-  id = "Observation/SARSCoV2-IgA-" + context.source[laborMapping().id()]
+  id = "Observation/SARSCoV2-IGG-IA-" + context.source[laborMapping().id()]
 
   meta {
     source = "https://fhir.centraxx.de"
-    profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/GECCO FINAL-iga-ser-pl-ia-acnc"
+    profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/sars-cov-2-iga-ser-pl-ia-acnc"
+  }
+
+  // TODO check identifier
+  identifier {
+    type {
+      coding {
+        system = "http://terminology.hl7.org/CodeSystem/v2-0203"
+        code = "OBI"
+      }
+    }
+    system = "https://www.charite.de/fhir/CodeSystem/lab-identifiers"
+    value = "94504-8_SARS-CoV-2-Ab-Panel"
+    assigner {
+      reference = "Organization/Charité"
+    }
   }
 
   status = Observation.ObservationStatus.UNKNOWN
@@ -68,7 +87,9 @@ observation {
     coding {
       system = "http://loinc.org"
       code = "94720-0"
+      display = "SARS-CoV-2 (COVID-19) IgA Ab [Units/volume] in Serum or Plasma by Immunoassay"
     }
+    text = "SARS-CoV-2 IgA antibodies quantitative"
   }
 
   effectiveDateTime {
@@ -77,17 +98,14 @@ observation {
   }
 
   subject {
-    reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.\
-            find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
+    reference = "Patient/Patient-" + context.source[laborMapping().relatedPatient().idContainer()]["psn"][0]
   }
 
-  def numVal = labValAb[LaborFindingLaborValue.NUMERIC_VALUE]
-  if (numVal){
-    valueQuantity {
-      value = numVal
-      unit = "mg/dl"
-      system = "http://unitsofmeasure.org"
-    }
+  valueQuantity {
+    value = numVal
+    unit = "[IU]/mL"
+    system = "http://unitsofmeasure.org"
+    code = "[IU]/mL"
   }
 }
 

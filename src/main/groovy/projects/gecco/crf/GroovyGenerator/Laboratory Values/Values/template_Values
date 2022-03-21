@@ -1,4 +1,5 @@
-package projects.gecco.crf.labVital.laborValue
+//package projects.gecco.crf.labVital.laborValue
+package projects.gecco.crf
 
 import ca.uhn.fhir.model.api.TemporalPrecisionEnum
 import de.kairos.fhir.centraxx.metamodel.CrfItem
@@ -35,14 +36,26 @@ observation {
   }
 
   final def lFlV = context.source[laborMapping().laborFinding().laborFindingLaborValues()].find {
-    "COV_GECCO_GOT/AST" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
+    "##ParameterCodeValue##" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
   }
   if (!lFlV) {
     return
   }
 
+  def numVal =lFlV[LaborFindingLaborValue.NUMERIC_VALUE]
+  if (!numVal){
+    return
+  }
+
   final def numID = context.source[laborMapping().id()]
   final String labValID = lFlV[LaborFindingLaborValue.LABOR_VALUE][LaborValue.ID]
+
+  id = "Observation/LaborValue-" + "##IdComplement##" + "-" + labValID + "-" + numID
+
+  meta {
+    source = "https://fhir.centraxx.de"
+    profile "https://www.medizininformatik-initiative.de/fhir/core/modul-labor/StructureDefinition/ObservationLab"
+  }
 
   identifier {
     type{
@@ -56,13 +69,6 @@ observation {
     assigner {
       reference = "Assigner/" + context.source[laborMapping().creator().id()]
     }
-  }
-
-  id = "Observation/LaborValue-" + labValID + "-" + numID
-
-  meta {
-    source = "https://fhir.centraxx.de"
-    profile "https://www.medizininformatik-initiative.de/fhir/core/modul-labor/StructureDefinition/ObservationLab"
   }
 
   status = Observation.ObservationStatus.FINAL
@@ -81,13 +87,14 @@ observation {
   code{
     coding{
       system = "http://loinc.org"
-      code = "1920-8"
+      code = "##LoincCode##"
+      display = "##LoincDisplay##"
     }
+    text = "##ValueName-EN##"
   }
 
   subject {
-    reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.\
-            find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
+    reference = "Patient/Patient-" + context.source[laborMapping().relatedPatient().idContainer()]["psn"][0]
   }
 
   effectiveDateTime {
@@ -95,14 +102,11 @@ observation {
     precision = TemporalPrecisionEnum.DAY.toString()
   }
 
-  def numVal =lFlV[LaborFindingLaborValue.NUMERIC_VALUE]
-  if (numVal){
-    valueQuantity {
-      value = numVal
-      unit = "U/L"
-      system = "http://unitsofmeasure.org"
-      code = "U/L"
-    }
+  valueQuantity {
+    value = numVal
+    unit = "##Unit##"
+    system = "http://unitsofmeasure.org"
+    code = "##Unit##"
   }
 }
 
