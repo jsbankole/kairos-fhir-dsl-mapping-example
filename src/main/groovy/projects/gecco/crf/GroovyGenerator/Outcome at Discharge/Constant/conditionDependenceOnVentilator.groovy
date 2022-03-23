@@ -61,18 +61,15 @@ condition {
       coding {
         system = "http://snomed.info/sct"
         code = "404989005"
+        display = "Ventilation status (observable entity)"
       }
     }
 
     code {
-      crfItemVent[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item ->
-        final def SNOMEDcode = matchResponseToSNOMED(item[CatalogEntry.CODE] as String)
-        if (SNOMEDcode) {
-          coding {
-            system = "http://snomed.info/sct"
-            code = SNOMEDcode
-          }
-        }
+      coding {
+        system = "http://snomed.info/sct"
+        code = "444932008"
+        display = "Dependence on ventilator (finding)"
       }
     }
 
@@ -87,17 +84,6 @@ condition {
   }
 }
 
-
-static String matchResponseToSNOMED(final String resp) {
-  switch (resp) {
-    case ("COV_BEATMET_JA"):
-      return "444932008"
-    case ("COV_BEATMET_NEIN"):
-      return "444932008"
-    default: null
-  }
-}
-
 static String matchResponseToVerStat(final String resp) {
   switch (resp) {
     case ("COV_BEATMET_JA"):
@@ -107,6 +93,7 @@ static String matchResponseToVerStat(final String resp) {
     default: null
   }
 }
+
 static String matchResponseToVerificationStatusHL7(final String resp) {
   switch (resp) {
     case null:

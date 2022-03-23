@@ -37,12 +37,8 @@ observation {
     return
   }
 
-  final def crfItems = context.source[studyVisitItem().crf().items()]
-  if (!crfItems || crfItems == []) {
-    return
-  }
-
   id = "Observation/SarsCov2RT-PCR-" + context.source[studyVisitItem().id()]
+
   identifier {
     type {
       coding {
@@ -51,11 +47,12 @@ observation {
       }
     }
     system = "http://www.acme.com/identifiers/patient"
-    value = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
+    value = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find { "MPI" == it["idContainerType"]?.getAt("code") }["psn"]
     assigner {
       reference = "Assigner/" + context.source[studyVisitItem().creator().id()]
     }
   }
+
   meta {
     source = "https://fhir.centraxx.de"
     profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/sars-cov-2-rt-pcr"
@@ -78,54 +75,35 @@ observation {
     coding {
       system = "http://loinc.org"
       code = "94500-6"
+      display = "SARS-CoV-2 (COVID-19) RNA [Presence] in Respiratory specimen by NAA with probe detection"
     }
+    text = "SARS-CoV-2-RNA (PCR)"
   }
 
   subject {
-    reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
+    reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find { "MPI" == it["idContainerType"]?.getAt("code") }["psn"]
   }
 
-  final def valIndex = []
   valueCodeableConcept {
-    crfItems?.each { final item ->
-      final def measParamCode = item[CrfItem.TEMPLATE][CrfTemplateField.LABOR_VALUE][LaborValue.CODE]
-      if (measParamCode == "COV_GECCO_ERGEBNIS_ABSTRICH") {
-        valIndex.add(item[CrfItem.VALUE_INDEX])
-        item[CrfItem.CATALOG_ENTRY_VALUE]?.each { final ite ->
-          final def SNOMEDcode = mapDiscSNOMED(ite[CatalogEntry.CODE] as String)
-          if (SNOMEDcode) {
-            coding {
-              system = "http://snomed.info/sct"
-              code = SNOMEDcode
-            }
-          }
+    crfItemDisc[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item ->
+      final def SNOMEDcode = mapDiscSNOMED(item[CatalogEntry.CODE] as String)
+      if (SNOMEDcode) {
+        coding {
+          system = "http://snomed.info/sct"
+          code = SNOMEDcode
         }
       }
     }
   }
 
-  final def crfItemPCRDates = context.source[studyVisitItem().crf().items()]
-  if (!crfItemPCRDates || crfItemPCRDates == []) {
-    return
-  }
-
-  final List pcrDateList = []
-  crfItemPCRDates?.each { final dates ->
-    final def pcrDateCode = dates[CrfItem.TEMPLATE][CrfTemplateField.LABOR_VALUE][LaborValue.CODE]
-    if (pcrDateCode == "COV_UMG_FOLGEABSTRICH_VOM") {
-      final String tDs = normalizeDate(dates[CrfItem.DATE_VALUE][PrecisionDate.DATE] as String)
-      if (tDs) {
-        pcrDateList.add(tDs)
-      }
-    }
-  }
-
-  //Date of last test--> most relevant
   effectiveDateTime {
-    date = selectMostRecentDate(pcrDateList)
+    date = normalizeDate(context.source[studyVisitItem().crf().creationDate()] as String)
+    precision = TemporalPrecisionEnum.SECOND.toString()
   }
+}
 
-
+static String normalizeDate(final String dateTimeString) {
+  return dateTimeString != null ? dateTimeString.substring(0, 19) : null
 }
 
 static String mapDiscSNOMED(final String discharge) {
@@ -137,12 +115,4 @@ static String mapDiscSNOMED(final String discharge) {
     case "COV_NEGATIV":
       return "260415000"
   }
-}
-
-static String normalizeDate(final String dateTimeString) {
-  return dateTimeString != null ? dateTimeString.substring(0, 19) : null
-}
-
-static String selectMostRecentDate(final List<String> vdl) {
-  return !vdl ? null : (vdl.sort().last() as String)
 }

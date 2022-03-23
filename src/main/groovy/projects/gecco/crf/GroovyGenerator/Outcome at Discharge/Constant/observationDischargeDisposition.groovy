@@ -55,7 +55,9 @@ observation {
       coding {
         system = "http://loinc.org"
         code = "55128-3"
+        display = "Discharge disposition"
       }
+      text = "Type of discharge"
     }
 
     subject {
