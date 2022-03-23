@@ -50,6 +50,9 @@ subprocess.run(['python', f"./GroovyGenerator/Medication/main_medication.py"])
 # Generate Outcome at Discharge files
 subprocess.run(['python', f"./GroovyGenerator/Outcome at Discharge/main_outcome_discharge.py"])
 
+# Generate Study Enrollment files
+subprocess.run(['python', f"./GroovyGenerator/Study Enrollment/main_study_enrollment.py"])
+
 # # Generate Vital Signs Values
 # subprocess.run(['python', f"./GroovyGenerator/Vital Signs/main_vital_signs.py"])
 

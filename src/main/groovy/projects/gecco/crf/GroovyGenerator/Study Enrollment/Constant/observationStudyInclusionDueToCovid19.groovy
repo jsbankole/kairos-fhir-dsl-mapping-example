@@ -53,7 +53,9 @@ observation {
       coding {
         system = "https://www.netzwerk-universitaetsmedizin.de/fhir/CodeSystem/ecrf-parameter-codes"
         code = "02"
+        display = "Study inclusion due to Covid-19"
       }
+      text = "Confirmed Covid-19 diagnosis as main reason for enrolment in the study"
     }
 
     subject {
@@ -94,9 +96,5 @@ static String mapInclusionSNOMED(final String inclusion) {
       return "373067005"
     case "COV_UNBEKANNT":
       return "261665006"
-    case "COV_ANDERE":
-      return "74964007"
-    case "COV_NA":
-      return "385432009"
   }
 }

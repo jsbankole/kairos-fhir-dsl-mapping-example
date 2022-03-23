@@ -87,40 +87,42 @@ observation {
 
   }
 
-  // EudraCT Number
-  final def crfItemEudraCT = context.source[studyVisitItem().crf().items()].find {
-    "COV_GECCO_STUDIE_EUDRACT_NUMMER" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
-  }
-
-  if (crfItemEudraCT[CrfItem.STRING_VALUE]) {
-    component {
-      code {
-        coding {
-          system = "https://www.netzwerk-universitaetsmedizin.de/fhir/CodeSystem/ecrf-parameter-codes"
-          code = "04"
-          display = "EudraCT Number"
-        }
-        text = "EudraCT (European Union Drug Regulating Authorities Clinical Trials) registration number"
-      }
-      valueString = new StringType(crfItemEudraCT[CrfItem.STRING_VALUE] as String)
+  if (answerCODE == "COV_JA"){
+    // EudraCT Number
+    final def crfItemEudraCT = context.source[studyVisitItem().crf().items()].find {
+      "COV_GECCO_STUDIE_EUDRACT_NUMMER" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
     }
-  }
 
-  // NCT Number
-  final def crfItemNCT = context.source[studyVisitItem().crf().items()].find {
-    "COV_GECCO_STUDIE_NCT_NUMMER" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
-  }
-  if (crfItemNCT[CrfItem.STRING_VALUE]) {
-    component {
-      code {
-        coding {
-          system = "https://www.netzwerk-universitaetsmedizin.de/fhir/CodeSystem/ecrf-parameter-codes"
-          code = "05"
-          display = "NCT Number"
+    if (crfItemEudraCT[CrfItem.STRING_VALUE]) {
+      component {
+        code {
+          coding {
+            system = "https://www.netzwerk-universitaetsmedizin.de/fhir/CodeSystem/ecrf-parameter-codes"
+            code = "04"
+            display = "EudraCT Number"
+          }
+          text = "EudraCT (European Union Drug Regulating Authorities Clinical Trials) registration number"
         }
-        text = "NCT number"
+        valueString = new StringType(crfItemEudraCT[CrfItem.STRING_VALUE] as String)
       }
-      valueString = new StringType(crfItemNCT[CrfItem.STRING_VALUE] as String)
+    }
+
+    // NCT Number
+    final def crfItemNCT = context.source[studyVisitItem().crf().items()].find {
+      "COV_GECCO_STUDIE_NCT_NUMMER" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
+    }
+    if (crfItemNCT[CrfItem.STRING_VALUE]) {
+      component {
+        code {
+          coding {
+            system = "https://www.netzwerk-universitaetsmedizin.de/fhir/CodeSystem/ecrf-parameter-codes"
+            code = "05"
+            display = "NCT Number"
+          }
+          text = "NCT number"
+        }
+        valueString = new StringType(crfItemNCT[CrfItem.STRING_VALUE] as String)
+      }
     }
   }
 }
