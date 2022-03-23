@@ -28,93 +28,96 @@ condition {
     return //no export
   }
   final def crfItemSymptom = context.source[studyVisitItem().crf().items()].find {
-    "COV_GECCO_HUSTEN" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
+    "##ParameterCodeValue##" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
   }
   if (!crfItemSymptom) {
     return //no export
   }
-  if (crfItemSymptom[CrfItem.CATALOG_ENTRY_VALUE] != []) {
+  if (crfItemSymptom[CrfItem.CATALOG_ENTRY_VALUE] == []) {
+    return
+  }
 
-    id = "Condition/SymptomsOfCovid-" + context.source[studyVisitItem().crf().id()] + "-" + crfItemSymptom[CrfItem.ID]
+  id = "Condition/SymptomsOfCovid-##IdComplement##" + context.source[studyVisitItem().crf().id()] + "-" + crfItemSymptom[CrfItem.ID]
 
-    meta {
-      source = "https://fhir.centraxx.de"
-      profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/symptoms-covid-19"
-    }
+  meta {
+    source = "https://fhir.centraxx.de"
+    profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/symptoms-covid-19"
+  }
 
-    crfItemSymptom[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item ->
-      final def VERcode = matchResponseToVerificationStatus(item[CatalogEntry.CODE] as String)
-      if (VERcode == "261665006") {
-        modifierExtension {
-          url = "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/uncertainty-of-presence"
-          valueCodeableConcept {
-            coding {
-              system = "http://snomed.info/sct"
-              code = "261665006"
-            }
-          }
-        }
-      } else if (["410594000", "410605003"].contains(VERcode)) {
-        verificationStatus {
-          coding {
-            system = "http://snomed.info/sct"
-            code = VERcode
-          }
-          coding {
-            system = "http://terminology.hl7.org/CodeSystem/condition-ver-status"
-            code = matchResponseToVerificationStatusHL7(item[CatalogEntry.CODE] as String)
-          }
-        }
-      }
-    }
-
-    category {
-      coding {
-        system = "http://loinc.org"
-        code = "75325-1"
-      }
-    }
-
-    subject {
-      reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
-    }
-
-    recordedDate {
-      date = normalizeDate(context.source[studyVisitItem().crf().creationDate()] as String)
-      precision = TemporalPrecisionEnum.DAY.toString()
+  category {
+    coding {
+      system = "http://loinc.org"
+      code = "75325-1"
+      display = "Symptom"
     }
   }
 
+  subject {
+    reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find { "MPI" == it["idContainerType"]?.getAt("code") }["psn"]
+  }
+
+  recordedDate {
+    date = normalizeDate(context.source[studyVisitItem().crf().creationDate()] as String)
+    precision = TemporalPrecisionEnum.DAY.toString()
+  }
+
+  code {
+    coding {
+      system = "http://snomed.info/sct"
+      code = "##SnomedCode##"
+      display = "##SnomedDisplay##"
+    }
+  }
 
   crfItemSymptom[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item ->
-    final def SNOMEDcode = item[CatalogEntry.CODE] as String
-    if (SNOMEDcode == "COV_JA") {
-      final def crfItemSeverity = context.source[studyVisitItem().crf().items()].find {
-        "COV_GECCO_HUSTEN_SCHWEREGRAD" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
-      }
-      crfItemSeverity[CrfItem.CATALOG_ENTRY_VALUE]?.each { final itemSev ->
-        final def severityCode = matchResponseToSeverity(itemSev[CatalogEntry.CODE] as String)
-        if (severityCode) {
-          severity {
-            coding {
-              system = "http://snomed.info/sct"
-              code = severityCode
-            }
+    final def VERcode = matchResponseToVerificationStatus(item[CatalogEntry.CODE] as String)
+    if (VERcode == "261665006") {
+      modifierExtension {
+        url = "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/uncertainty-of-presence"
+        valueCodeableConcept {
+          coding {
+            system = "http://snomed.info/sct"
+            code = "261665006"
           }
         }
       }
-    }
-    code {
-      if (SNOMEDcode) {
+    } else if (["410594000", "410605003"].contains(VERcode)) {
+      verificationStatus {
         coding {
           system = "http://snomed.info/sct"
-          code = "49727002"
+          code = VERcode
+        }
+        coding {
+          system = "http://terminology.hl7.org/CodeSystem/condition-ver-status"
+          code = matchResponseToVerificationStatusHL7(item[CatalogEntry.CODE] as String)
+        }
+      }
+
+      // Severity
+      if(VERcode == "410605003"){
+        final def crfItemSeverity = context.source[studyVisitItem().crf().items()].find {
+          "##ParameterCodeValue##_SCHWEREGRAD" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
+        }
+
+        if (crfItemSeverity[CrfItem.CATALOG_ENTRY_VALUE] == []) {
+          return
+        }
+
+        crfItemSeverity[CrfItem.CATALOG_ENTRY_VALUE]?.each { final itemSev ->
+          final def severityCode = matchResponseToSeverity(itemSev[CatalogEntry.CODE] as String)
+          if (severityCode) {
+            severity {
+              coding {
+                system = "http://snomed.info/sct"
+                code = severityCode
+              }
+            }
+          }
         }
       }
     }
   }
 }
-
 
 static String matchResponseToVerificationStatus(final String resp) {
   switch (resp) {
@@ -127,6 +130,7 @@ static String matchResponseToVerificationStatus(final String resp) {
     default: "410605003"
   }
 }
+
 static String matchResponseToVerificationStatusHL7(final String resp) {
   switch (resp) {
     case null:
