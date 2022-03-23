@@ -43,23 +43,29 @@ medicationStatement {
       final def STATUScode = matchResponseToSTATUS(item[CatalogEntry.CODE] as String)
       if (STATUScode) {
         status = STATUScode
+
         medication {
           medicationCodeableConcept {
             coding {
               system = "http://fhir.de/CodeSystem/dimdi/atc"
               code = "J06B"
+              display = "IMMUNGLOBULINE"
             }
             coding {
               system = "http://snomed.info/sct"
               code = "333710000"
+              display = "Product containing immunoglobulin (product)"
             }
+            text = "immunoglobulins"
           }
         }
       }
     }
+
     subject {
       reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
     }
+
     effectiveDateTime {
       date = normalizeDate(context.source[studyVisitItem().crf().creationDate()] as String)
       precision = TemporalPrecisionEnum.SECOND.toString()

@@ -1,0 +1,106 @@
+
+    {
+        "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+        "transformByTemplate": "medicationStatement_PharmacTherapy_korticosteroid",
+        "exportToFhirResource": "MedicationStatement"
+    },
+    {
+        "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+        "transformByTemplate": "medicationStatement_PharmacTherapy_atazanavir",
+        "exportToFhirResource": "MedicationStatement"
+    },
+    {
+        "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+        "transformByTemplate": "medicationStatement_PharmacTherapy_darunavir",
+        "exportToFhirResource": "MedicationStatement"
+    },
+    {
+        "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+        "transformByTemplate": "medicationStatement_PharmacTherapy_chloroquine",
+        "exportToFhirResource": "MedicationStatement"
+    },
+    {
+        "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+        "transformByTemplate": "medicationStatement_PharmacTherapy_hydroxychloroquine",
+        "exportToFhirResource": "MedicationStatement"
+    },
+    {
+        "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+        "transformByTemplate": "medicationStatement_PharmacTherapy_ivermectin",
+        "exportToFhirResource": "MedicationStatement"
+    },
+    {
+        "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+        "transformByTemplate": "medicationStatement_PharmacTherapy_lopinavir",
+        "exportToFhirResource": "MedicationStatement"
+    },
+    {
+        "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+        "transformByTemplate": "medicationStatement_PharmacTherapy_ganciclovir",
+        "exportToFhirResource": "MedicationStatement"
+    },
+    {
+        "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+        "transformByTemplate": "medicationStatement_PharmacTherapy_oseltamivir",
+        "exportToFhirResource": "MedicationStatement"
+    },
+    {
+        "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+        "transformByTemplate": "medicationStatement_PharmacTherapy_remdesivir",
+        "exportToFhirResource": "MedicationStatement"
+    },
+    {
+        "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+        "transformByTemplate": "medicationStatement_PharmacTherapy_ribavirin",
+        "exportToFhirResource": "MedicationStatement"
+    },
+    {
+        "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+        "transformByTemplate": "medicationStatement_PharmacTherapy_tocilizumab",
+        "exportToFhirResource": "MedicationStatement"
+    },
+    {
+        "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+        "transformByTemplate": "medicationStatement_PharmacTherapy_sarimulab",
+        "exportToFhirResource": "MedicationStatement"
+    },
+    {
+        "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+        "transformByTemplate": "medicationStatement_PharmacTherapy_cni",
+        "exportToFhirResource": "MedicationStatement"
+    },
+    {
+        "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+        "transformByTemplate": "medicationStatement_PharmacTherapy_anti_tnf",
+        "exportToFhirResource": "MedicationStatement"
+    },
+    {
+        "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+        "transformByTemplate": "medicationStatement_PharmacTherapy_ii1_receptor",
+        "exportToFhirResource": "MedicationStatement"
+    },
+    {
+        "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+        "transformByTemplate": "medicationStatement_PharmacTherapy_ruxolitinib",
+        "exportToFhirResource": "MedicationStatement"
+    },
+    {
+        "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+        "transformByTemplate": "medicationStatement_PharmacTherapy_colchicine",
+        "exportToFhirResource": "MedicationStatement"
+    },
+    {
+        "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+        "transformByTemplate": "medicationStatement_PharmacTherapy_interferon",
+        "exportToFhirResource": "MedicationStatement"
+    },
+    {
+        "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+        "transformByTemplate": "medicationStatement_PharmacTherapy_calcifedoil",
+        "exportToFhirResource": "MedicationStatement"
+    },
+    {
+        "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+        "transformByTemplate": "medicationStatement_PharmacTherapy_zinc",
+        "exportToFhirResource": "MedicationStatement"
+    },

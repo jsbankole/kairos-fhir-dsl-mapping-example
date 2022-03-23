@@ -1,10 +1,5 @@
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
-      "transformByTemplate": "medicationStatementPharmacologicalTherapy",
-      "exportToFhirResource": "MedicationStatement"
-    },
-    {
-      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
       "transformByTemplate": "medicationStatementACEHemmer",
       "exportToFhirResource": "MedicationStatement"
     },

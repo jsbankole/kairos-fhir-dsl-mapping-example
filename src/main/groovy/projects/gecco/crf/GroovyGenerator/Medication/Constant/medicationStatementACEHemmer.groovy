@@ -42,6 +42,7 @@ medicationStatement {
       final def STATUScode = matchResponseToSTATUS(item[CatalogEntry.CODE] as String)
       if (STATUScode) {
         status = STATUScode
+
         medication {
           medicationCodeableConcept {
             coding {
@@ -49,17 +50,23 @@ medicationStatement {
               code = "41549009"
               display = "Product containing angiotensin-converting enzyme inhibitor (product)"
             }
-            coding {
-              system = "http://fhir.de/CodeSystem/dimdi/atc"
-              code = "C09A"
+            if (["not-taken", "unknown"].contains(STATUScode)) {
+              coding {
+                system = "http://fhir.de/CodeSystem/dimdi/atc"
+                code = "C09A"
+                display = "ACE-HEMMER, REIN"
+              }
             }
+            text = "ACE inhibitors"
           }
         }
       }
     }
+
     subject {
       reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
     }
+
     effectiveDateTime {
       date = normalizeDate(context.source[studyVisitItem().crf().creationDate()] as String)
       precision = TemporalPrecisionEnum.SECOND.toString()
