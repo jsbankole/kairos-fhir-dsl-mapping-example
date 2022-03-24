@@ -24,45 +24,58 @@ procedure {
   if (crfName != "SarsCov2_THERAPIE" || studyVisitStatus == "OPEN") {
     return //no export
   }
+
   final def crfItemRespProne = context.source[studyVisitItem().crf().items()].find {
     "COV_GECCO_BAUCHLAGE" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
   }
-  if (!crfItemRespProne) {
+  if (!crfItemRespProne || crfItemRespProne[CrfItem.CATALOG_ENTRY_VALUE] == []) {
     return
   }
-  if (crfItemRespProne[CrfItem.CATALOG_ENTRY_VALUE] != []) {
-    id = "Procedure/PronePosition-" + context.source[studyVisitItem().id()]
 
-    meta {
-      source = "https://fhir.centraxx.de"
-      profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/prone-position"
+  String[] STATUS = [null, null]
+  crfItemRespProne[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item ->
+    STATUS = matchResponseToSTATUS(item[CatalogEntry.CODE] as String)
+  }
+
+  if (!STATUS[0]){
+    return
+  }
+
+  id = "Procedure/PronePosition-" + context.source[studyVisitItem().id()]
+
+  meta {
+    source = "https://fhir.centraxx.de"
+    profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/prone-position"
+  }
+
+  status = STATUS[0]
+
+  category {
+    coding {
+      system = "http://snomed.info/sct"
+      code = "225287004"
     }
+  }
 
-    crfItemRespProne[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item ->
-      final def STATUScode = matchResponseToSTATUS(item[CatalogEntry.CODE] as String)
-      if (STATUScode) {
-        status = STATUScode
+  code {
+    coding {
+      system = "http://snomed.info/sct"
+      code = "431182000"
+    }
+  }
+
+  subject {
+    reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
+  }
+
+  performedDateTime {
+    if(STATUS[0] != "in-progress"){
+      extension {
+        url = "http://hl7.org/fhir/StructureDefinition/data-absent-reason"
+        valueCode = "unknown"
       }
     }
-
-    category {
-      coding {
-        system = "http://snomed.info/sct"
-        code = "225287004"
-      }
-    }
-
-    code {
-      coding {
-        system = "http://snomed.info/sct"
-        code = "431182000"
-      }
-    }
-    subject {
-      reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
-    }
-
-    performedDateTime {
+    else{
       date = normalizeDate(context.source[studyVisitItem().crf().creationDate()] as String)
       precision = TemporalPrecisionEnum.DAY.toString()
     }
@@ -73,14 +86,14 @@ static String normalizeDate(final String dateTimeString) {
   return dateTimeString != null ? dateTimeString.substring(0, 19) : null
 }
 
-static String matchResponseToSTATUS(final String resp) {
+static String[] matchResponseToSTATUS(final String resp) {
   switch (resp) {
     case ("COV_JA"):
-      return "in-progress"
+      return ["in-progress", ""]
     case ("COV_NEIN"):
-      return "not-done"
+      return ["not-done", "not-performed"]
     case ("COV_UNBEKANNT"):
-      return "unknown"
-    default: null
+      return ["unknown", "unknown"]
+    default: [null, null]
   }
 }

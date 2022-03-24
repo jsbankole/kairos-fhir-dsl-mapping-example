@@ -31,6 +31,7 @@ procedure {
     return
   }
   if (crfItemRespThera[CrfItem.CATALOG_ENTRY_VALUE] != []) {
+
     id = "Procedure/RespiratoryTherapies-" + context.source[studyVisitItem().id()]
 
     meta {
@@ -42,6 +43,40 @@ procedure {
       final def STATUScode = matchResponseToSTATUS(item[CatalogEntry.CODE] as String)
       if (STATUScode) {
         status = STATUScode
+
+        if (STATUScode == "in-progress"){
+
+          final def crfItemRespTheraDate = context.source[studyVisitItem().crf().items()].find {
+            "COV_GECCO_SAUERSTOFFTHERAPIE_DATE" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
+          }
+
+          performedDateTime {
+            if(crfItemRespTheraDate[CrfItem.DATE_VALUE]){
+              date = crfItemRespTheraDate[CrfItem.DATE_VALUE].toString().substring(6, 16)
+            }else{
+              extension {
+                url = "http://hl7.org/fhir/StructureDefinition/data-absent-reason"
+                valueCode = "unknown"
+              }
+            }
+          }
+
+        }else if(STATUScode == "not-done"){
+          performedDateTime {
+            extension {
+              url = "http://hl7.org/fhir/StructureDefinition/data-absent-reason"
+              valueCode = "not-performed"
+            }
+          }
+
+        }else{
+          performedDateTime {
+            extension {
+              url = "http://hl7.org/fhir/StructureDefinition/data-absent-reason"
+              valueCode = "unknown"
+            }
+          }
+        }
       }
     }
 
@@ -61,17 +96,12 @@ procedure {
     subject {
       reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
     }
-
-    performedDateTime {
-      date = normalizeDate(context.source[studyVisitItem().crf().creationDate()] as String)
-    }
   }
 }
 
 static String normalizeDate(final String dateTimeString) {
   return dateTimeString != null ? dateTimeString.substring(0, 10) : null
 }
-
 
 static String matchResponseToSTATUS(final String resp) {
   switch (resp) {

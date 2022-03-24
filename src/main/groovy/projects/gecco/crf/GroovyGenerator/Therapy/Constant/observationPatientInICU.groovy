@@ -43,10 +43,19 @@ observation {
 
     status = "final"
 
+    category {
+      coding {
+        system = "http://terminology.hl7.org/CodeSystem/observation-category"
+        code = "survey"
+        display = "Survey"
+      }
+    }
+
     code {
       coding {
         system = "http://loinc.org"
         code = "95420-6"
+        display = "Whether the patient was admitted to intensive care unit (ICU) for condition of interest"
       }
     }
 

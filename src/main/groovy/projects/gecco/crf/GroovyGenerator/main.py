@@ -56,11 +56,11 @@ subprocess.run(['python', f"./GroovyGenerator/Study Enrollment/main_study_enroll
 # Generate Symptoms files
 subprocess.run(['python', f"./GroovyGenerator/Symptoms/main_symptoms.py"])
 
+# Generate Therapy files
+subprocess.run(['python', f"./GroovyGenerator/Therapy/main_therapy.py"])
+
 # # Generate Vital Signs Values
 # subprocess.run(['python', f"./GroovyGenerator/Vital Signs/main_vital_signs.py"])
-
-# Generate Remaining files
-# .... Add later ....
 
 # Copy files from respective *Folder*/Final folders to crf folders
 

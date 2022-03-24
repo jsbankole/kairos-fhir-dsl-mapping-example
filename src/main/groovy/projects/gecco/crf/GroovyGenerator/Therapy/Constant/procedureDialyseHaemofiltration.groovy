@@ -49,6 +49,7 @@ procedure {
       coding {
         system = "http://snomed.info/sct"
         code = "277132007"
+        display = "Therapeutic procedure (procedure)"
       }
     }
 
@@ -61,8 +62,11 @@ procedure {
       coding {
         system = "http://snomed.info/sct"
         code = "108241001"
+        display = "Dialysis procedure (procedure)"
       }
+      text = "Dialysis"
     }
+
     subject {
       reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
     }
