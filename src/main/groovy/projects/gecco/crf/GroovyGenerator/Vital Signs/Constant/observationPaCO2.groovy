@@ -36,8 +36,15 @@ observation {
   final def labVal = context.source[laborMapping().laborFinding().laborFindingLaborValues()].find {
     "COV_GECCO_PACO2" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
   }
-  if (!labVal) {
+  if (!labVal || !labVal[LaborFindingLaborValue.NUMERIC_VALUE]) {
     return
+  }
+
+  id = "Observation/PaCO2-" + context.source[laborMapping().id()]
+
+  meta {
+    source = "https://fhir.centraxx.de"
+    profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/carbon-dioxide-partial-pressure"
   }
 
   identifier {
@@ -52,13 +59,6 @@ observation {
     assigner {
       reference = "Assigner/" + context.source[laborMapping().creator().id()]
     }
-  }
-
-  id = "Observation/PaCO2-" + context.source[laborMapping().id()]
-
-  meta {
-    source = "https://fhir.centraxx.de"
-    profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/carbon-dioxide-partial-pressure"
   }
 
   status = Observation.ObservationStatus.UNKNOWN
@@ -86,8 +86,7 @@ observation {
   }
 
   subject {
-    reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.\
-            find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
+    reference = "Patient/Patient-" + context.source[laborMapping().relatedPatient().idContainer()]["psn"][0]
   }
 
   effectiveDateTime {
@@ -95,18 +94,13 @@ observation {
     precision = TemporalPrecisionEnum.DAY.toString()
   }
 
-  labVal[LaborFindingLaborValue.NUMERIC_VALUE]?.each { final numVal ->
-    if (numVal){
-      valueQuantity {
-        value = numVal
-        unit = "mmHg"
-        system = "http://unitsofmeasure.org"
-        code = "mm[Hg]"
-      }
-    }
+  valueQuantity {
+    value = labVal[LaborFindingLaborValue.NUMERIC_VALUE]
+    unit = "mmHg"
+    system = "http://unitsofmeasure.org"
+    code = "mm[Hg]"
   }
 }
-
 
 static String normalizeDate(final String dateTimeString) {
   return dateTimeString != null ? dateTimeString.substring(0, 19) : null

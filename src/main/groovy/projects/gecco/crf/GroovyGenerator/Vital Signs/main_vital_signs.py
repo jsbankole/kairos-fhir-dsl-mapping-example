@@ -24,6 +24,3 @@ for file_name in src_files:
     full_file_name = os.path.join(src, file_name)
     if os.path.isfile(full_file_name):
         shutil.copy(full_file_name, dest)
-
-# Run Values main file
-subprocess.run(['python', f"./GroovyGenerator/Vital Signs/Observation/main_vital_signs_observation.py"])

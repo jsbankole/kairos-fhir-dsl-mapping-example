@@ -28,6 +28,7 @@ observation {
   if (!studyMember) {
     return //no export
   }
+
   final def profileName = context.source[laborMapping().laborFinding().laborMethod().code()]
   if (profileName != "COV_GECCO_VITALPARAMTER") {
     return //no export
@@ -36,10 +37,9 @@ observation {
   final def labVal = context.source[laborMapping().laborFinding().laborFindingLaborValues()].find {
     "COV_GECCO_ATEMFREQUENZ" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
   }
-  if (!labVal) {
+  if (!labVal || !labVal[LaborFindingLaborValue.NUMERIC_VALUE]) {
     return
   }
-
 
   id = "Observation/RespiratoryRate-" + context.source[laborMapping().id()]
 
@@ -61,16 +61,18 @@ observation {
     coding {
       system = "http://loinc.org"
       code = "9279-1"
+      display = "Respiratory rate"
     }
     coding {
       system = "http://snomed.info/sct"
       code = "86290005"
+      display = "Respiratory rate (observable entity)"
     }
+    text = "Respiratory rate"
   }
 
   subject {
-    reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.\
-            find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
+    reference = "Patient/Patient-" + context.source[laborMapping().relatedPatient().idContainer()]["psn"][0]
   }
 
   effectiveDateTime {
@@ -78,18 +80,13 @@ observation {
     precision = TemporalPrecisionEnum.DAY.toString()
   }
 
-  labVal[LaborFindingLaborValue.NUMERIC_VALUE]?.each { final numVal ->
-    if (numVal){
-      valueQuantity {
-        value = numVal
-        unit = "per minute"
-        system = "http://unitsofmeasure.org"
-        code = "/min"
-      }
-    }
+  valueQuantity {
+    value = labVal[LaborFindingLaborValue.NUMERIC_VALUE]
+    unit = "per minute"
+    system = "http://unitsofmeasure.org"
+    code = "/min"
   }
 }
-
 
 static String normalizeDate(final String dateTimeString) {
   return dateTimeString != null ? dateTimeString.substring(0, 19) : null

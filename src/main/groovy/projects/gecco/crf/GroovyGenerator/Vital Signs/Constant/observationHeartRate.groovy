@@ -36,7 +36,7 @@ observation {
   final def labVal = context.source[laborMapping().laborFinding().laborFindingLaborValues()].find {
     "COV_GECCO_HERZFREQUENZ" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
   }
-  if (!labVal) {
+  if (!labVal || !labVal[LaborFindingLaborValue.NUMERIC_VALUE]) {
     return
   }
 
@@ -45,6 +45,20 @@ observation {
   meta {
     source = "https://fhir.centraxx.de"
     profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/heart-rate"
+  }
+
+  identifier {
+    type{
+      coding {
+        system = "http://terminology.hl7.org/CodeSystem/v2-0203"
+        code = "OBI"
+      }
+    }
+    system = "http://www.acme.com/identifiers/patient"
+    value = "Observation/PaCO2-" + context.source[laborMapping().id()]
+    assigner {
+      reference = "Assigner/" + context.source[laborMapping().creator().id()]
+    }
   }
 
   status = Observation.ObservationStatus.UNKNOWN
@@ -60,16 +74,18 @@ observation {
     coding {
       system = "http://loinc.org"
       code = "8867-4"
+      display = "Heart rate"
     }
     coding {
       system = "http://snomed.info/sct"
       code = "364075005"
+      display = "Heart rate (observable entity)"
     }
+    text = "Heart rate"
   }
 
   subject {
-    reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.\
-            find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
+    reference = "Patient/Patient-" + context.source[laborMapping().relatedPatient().idContainer()]["psn"][0]
   }
 
   effectiveDateTime {
@@ -77,18 +93,13 @@ observation {
     precision = TemporalPrecisionEnum.DAY.toString()
   }
 
-  labVal[LaborFindingLaborValue.NUMERIC_VALUE]?.each { final numVal ->
-    if (numVal){
-      valueQuantity {
-        value = numVal
-        unit = "per minute"
-        system = "http://unitsofmeasure.org"
-        code = "/min"
-      }
-    }
+  valueQuantity {
+    value = labVal[LaborFindingLaborValue.NUMERIC_VALUE]
+    unit = "per minute"
+    system = "http://unitsofmeasure.org"
+    code = "/min"
   }
 }
-
 
 static String normalizeDate(final String dateTimeString) {
   return dateTimeString != null ? dateTimeString.substring(0, 19) : null

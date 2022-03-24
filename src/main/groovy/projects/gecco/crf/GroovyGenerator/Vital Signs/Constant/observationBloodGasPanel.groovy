@@ -97,13 +97,14 @@ observation {
   code {
     coding {
       system = "http://loinc.org"
-      code = "24338-6"
+      code = "24336-0"
+      display = "Gas panel - Arterial blood"
     }
+    text = "Gas panel - Arterial blood"
   }
 
   subject {
-    reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.\
-            find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
+    reference = "Patient/Patient-" + context.source[laborMapping().relatedPatient().idContainer()]["psn"][0]
   }
 
   effectiveDateTime {
@@ -137,7 +138,6 @@ observation {
     }
   }
 }
-
 
 static String normalizeDate(final String dateTimeString) {
   return dateTimeString != null ? dateTimeString.substring(0, 19) : null

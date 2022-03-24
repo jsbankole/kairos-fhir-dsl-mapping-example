@@ -34,7 +34,7 @@ observation {
   final def labVal = context.source[laborMapping().laborFinding().laborFindingLaborValues()].find {
     "COV_GECCO_FIO2" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
   }
-  if (!labVal) {
+  if (!labVal || !labVal[LaborFindingLaborValue.NUMERIC_VALUE]) {
     return //no export
   }
 
@@ -43,6 +43,20 @@ observation {
   meta {
     source = "https://fhir.centraxx.de"
     profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/body-temperature"
+  }
+
+  identifier {
+    type{
+      coding {
+        system = "http://terminology.hl7.org/CodeSystem/v2-0203"
+        code = "OBI"
+      }
+    }
+    system = "http://www.acme.com/identifiers/patient"
+    value = "Observation/PaCO2-" + context.source[laborMapping().id()]
+    assigner {
+      reference = "Assigner/" + context.source[laborMapping().creator().id()]
+    }
   }
 
   status = Observation.ObservationStatus.UNKNOWN
@@ -58,16 +72,18 @@ observation {
     coding {
       system = "http://loinc.org"
       code = "8310-5"
+      display = "Body temperature"
     }
     coding {
       system = "http://snomed.info/sct"
       code = "386725007"
+      display = "Body temperature (observable entity)"
     }
+    text = "Body temperature"
   }
 
   subject {
-    reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.\
-            find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
+    reference = "Patient/Patient-" + context.source[laborMapping().relatedPatient().idContainer()]["psn"][0]
   }
 
   effectiveDateTime {
@@ -75,15 +91,11 @@ observation {
     precision = TemporalPrecisionEnum.DAY.toString()
   }
 
-  labVal[LaborFindingLaborValue.NUMERIC_VALUE]?.each { final numVal ->
-    if (numVal) {
-      valueQuantity {
-        value = numVal
-        unit = "°C"
-        system = "http://unitsofmeasure.org"
-        code = "Cel"
-      }
-    }
+  valueQuantity {
+    value = labVal[LaborFindingLaborValue.NUMERIC_VALUE]
+    unit = "°C"
+    system = "http://unitsofmeasure.org"
+    code = "Cel"
   }
 }
 
