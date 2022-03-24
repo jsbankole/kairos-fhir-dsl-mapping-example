@@ -3,3 +3,8 @@
       "transformByTemplate": "patientFromCRF",
       "exportToFhirResource": "Patient"
     },
+    {
+      "selectFromCxxEntity": "CONSENT",
+      "transformByTemplate": "consentConsent",
+      "exportToFhirResource": "Consent"
+    },

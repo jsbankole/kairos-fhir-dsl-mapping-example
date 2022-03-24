@@ -18,7 +18,7 @@ for filename in os.listdir(dest):
     except Exception as e:
         print('Failed to delete %s. Reason: %s' % (file_path, e))
 
-# Get General Files
+# Generate General Files
 
 # Generate Anamnesis files
 subprocess.run(['python', f"./GroovyGenerator/Anamnesis/main_anamnesis.py"])
