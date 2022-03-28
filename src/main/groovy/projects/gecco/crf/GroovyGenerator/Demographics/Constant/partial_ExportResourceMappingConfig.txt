@@ -1,3 +1,4 @@
+
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
       "transformByTemplate": "observationPregnancyStatus",
@@ -22,4 +23,4 @@
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
       "transformByTemplate": "observationBodyHeight",
       "exportToFhirResource": "Observation"
-    }
+    },

@@ -1,3 +1,4 @@
+
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
       "transformByTemplate": "conditionStageAtDiagnosis",

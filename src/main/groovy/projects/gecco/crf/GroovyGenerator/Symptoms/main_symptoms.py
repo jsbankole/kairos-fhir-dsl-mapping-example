@@ -19,11 +19,11 @@ for filename in os.listdir(dest):
         print('Failed to delete %s. Reason: %s' % (file_path, e))
 
 # Move files from Constant to Final
-src_files = os.listdir(src)
-for file_name in src_files:
-    full_file_name = os.path.join(src, file_name)
-    if os.path.isfile(full_file_name):
-        shutil.copy(full_file_name, dest)
+# src_files = os.listdir(src)
+# for file_name in src_files:
+#     full_file_name = os.path.join(src, file_name)
+#     if os.path.isfile(full_file_name):
+#         shutil.copy(full_file_name, dest)
 
 # Run Symptoms generator file
 subprocess.run(['python', f"./GroovyGenerator/Symptoms/Symptoms/main_symptoms_symptoms.py"])

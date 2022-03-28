@@ -1,3 +1,4 @@
+
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
       "transformByTemplate": "procedureDialyseHaemofiltration",
@@ -27,4 +28,4 @@
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
       "transformByTemplate": "procedureVentilationType",
       "exportToFhirResource": "Procedure"
-    }
+    },

@@ -1,9 +1,10 @@
+
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
       "transformByTemplate": "conditionHIV",
       "exportToFhirResource": "Condition"
     },
-	{
+    {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
       "transformByTemplate": "conditionChronicKidneyDisease",
       "exportToFhirResource": "Condition"

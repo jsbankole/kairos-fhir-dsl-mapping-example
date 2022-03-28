@@ -1,3 +1,4 @@
+
     {
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
       "transformByTemplate": "observationInterventionalClinicalTrialParticipation",
@@ -7,4 +8,4 @@
       "selectFromCxxEntity": "STUDY_VISIT_ITEM",
       "transformByTemplate": "observationStudyInclusionDueToCovid19",
       "exportToFhirResource": "Observation"
-    }
+    },
