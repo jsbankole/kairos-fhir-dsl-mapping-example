@@ -6,6 +6,7 @@ import org.hl7.fhir.r4.model.Consent
 import org.hl7.fhir.r4.model.DateTimeType
 
 import static de.kairos.fhir.centraxx.metamodel.RootEntities.consent
+import static de.kairos.fhir.centraxx.metamodel.RootEntities.laborMapping
 
 /**
  * Represented by a CXX Consent
@@ -21,17 +22,18 @@ consent {
     return //no export
   }
 
-  //id = "Consent/Consent-" + context.source[consent().id()]
+  final def validUntil = context.source[consent().validUntil().date()]
+  final def validFrom = context.source[consent().validFrom().date()]
+  final String interpretedStatus = validUntilInterpreter(validUntil as String)
+  final def studyID = context.source[consent().consentType().flexiStudy().id()]
+
+  id = "Consent/Consent-" + context.source[consent().id()]
+
   meta{
     source = "https://fhir.centraxx.de"
     profile "http://fhir.de/ConsentManagement/StructureDefinition/Consent"
   }
 
-
-  final def validUntil = context.source[consent().validUntil().date()]
-  final def validFrom = context.source[consent().validFrom().date()]
-  final String interpretedStatus = validUntilInterpreter(validUntil as String)
-  final def studyID = context.source[consent().consentType().flexiStudy().id()]
   extension {
     url = "http://fhir.de/ConsentManagement/StructureDefinition/DomainReference"
     extension{
@@ -66,7 +68,8 @@ consent {
   }
 
   patient{
-    reference = "Patient/" +context.source[consent().patientContainer().id()]
+//    reference = "Patient/" +context.source[consent().patientContainer().id()]
+    reference = "Patient/Patient-" +context.source[consent().patientContainer().idContainer()]["psn"][0]
   }
 
   dateTime = context.source[consent().validFrom()] as DateTimeType

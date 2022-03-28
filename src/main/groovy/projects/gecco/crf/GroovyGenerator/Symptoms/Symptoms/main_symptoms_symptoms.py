@@ -17,7 +17,7 @@ with open(src + template_file, "r") as f:
     templateString = f.read()
 
 # Load corresponding values from excel
-values_df = pd.read_excel(src + values_file, )
+values_df = pd.read_excel(src + values_file)
 values_df = values_df.replace(np.nan, '')
 
 # Fields to replace in template (name of column in the excel)

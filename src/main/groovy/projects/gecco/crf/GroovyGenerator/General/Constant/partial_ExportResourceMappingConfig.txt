@@ -6,6 +6,6 @@
     },
     {
       "selectFromCxxEntity": "CONSENT",
-      "transformByTemplate": "consentConsent",
+      "transformByTemplate": "consentConsent_pebf_v4_3",
       "exportToFhirResource": "Consent"
     },
