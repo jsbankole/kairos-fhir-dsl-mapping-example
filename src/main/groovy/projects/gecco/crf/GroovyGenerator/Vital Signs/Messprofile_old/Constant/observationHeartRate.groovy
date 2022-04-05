@@ -15,35 +15,36 @@ import static de.kairos.fhir.centraxx.metamodel.RootEntities.studyVisitItem
 
 /**
  * Represented by a CXX StudyVisitItem
- * Specified by https://simplifier.net/forschungsnetzcovid-19/oxygensaturation
- * @author Lukas Reinert
+ * Specified by https://simplifier.net/forschungsnetzcovid-19/heartrate
+ * @author Lukas Reinert, Mike Wähnert
  * @since KAIROS-FHIR-DSL.v.1.9.0, CXX.v.3.18.1.7
  *
  */
 
 observation {
-  final def studyCode = context.source[studyVisitItem().studyMember().study().code()]
-  if (studyCode != "GECCO FINAL") {
+  final def studyMember = context.source[laborMapping().relatedPatient().studyMembers()].find {
+    it[StudyMember.STUDY][FlexiStudy.CODE] == "GECCO FINAL"
+  }
+  if (!studyMember) {
     return //no export
   }
-  final def crfName = context.source[studyVisitItem().template().crfTemplate().name()]
-  final def studyVisitStatus = context.source[studyVisitItem().status()]
-  if (crfName != "SarsCov2_VITALPARAMETER" || studyVisitStatus == "OPEN") {
+  final def profileName = context.source[laborMapping().laborFinding().laborMethod().code()]
+  if (profileName != "COV_GECCO_VITALPARAMTER") {
     return //no export
   }
 
-  final def labVal = context.source[studyVisitItem().crf().items()].find {
-    "COV_GECCO_PERI_O2" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
+  final def labVal = context.source[laborMapping().laborFinding().laborFindingLaborValues()].find {
+    "COV_GECCO_HERZFREQUENZ" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
   }
-  if (!labVal[CrfItem.NUMERIC_VALUE]) {
+  if (!labVal || !labVal[LaborFindingLaborValue.NUMERIC_VALUE]) {
     return
   }
 
-  id = "Observation/PeriO2Saturation-" + context.source[studyVisitItem().crf().id()]
+  id = "Observation/HeartRate-" + context.source[laborMapping().id()]
 
   meta {
     source = "https://fhir.centraxx.de"
-    profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/oxygen-saturation"
+    profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/heart-rate"
   }
 
   identifier {
@@ -54,9 +55,9 @@ observation {
       }
     }
     system = "http://www.acme.com/identifiers/patient"
-    value = "Observation/PaCO2-" + context.source[studyVisitItem().crf().id()]
+    value = "Observation/PaCO2-" + context.source[laborMapping().id()]
     assigner {
-      reference = "Assigner/" + context.source[studyVisitItem().crf().creator().id()]
+      reference = "Assigner/" + context.source[laborMapping().creator().id()]
     }
   }
 
@@ -72,30 +73,31 @@ observation {
   code {
     coding {
       system = "http://loinc.org"
-      code = "2708-6"
-      display = "Oxygen saturation in Arterial blood"
+      code = "8867-4"
+      display = "Heart rate"
     }
     coding {
       system = "http://snomed.info/sct"
-      code = "431314004"
+      code = "364075005"
+      display = "Heart rate (observable entity)"
     }
-    text = "Oxygen saturation in Arterial blood"
+    text = "Heart rate"
   }
 
   subject {
-    reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
+    reference = "Patient/Patient-" + context.source[laborMapping().relatedPatient().idContainer()]["psn"][0]
   }
 
   effectiveDateTime {
-    date = normalizeDate(labVal[CrfItem.CREATIONDATE] as String)
+    date = normalizeDate(context.source[laborMapping().creationDate()] as String)
     precision = TemporalPrecisionEnum.DAY.toString()
   }
 
   valueQuantity {
-    value = labVal[CrfItem.NUMERIC_VALUE]
-    unit = "%"
+    value = labVal[LaborFindingLaborValue.NUMERIC_VALUE]
+    unit = "per minute"
     system = "http://unitsofmeasure.org"
-    code = "%"
+    code = "/min"
   }
 }
 

@@ -22,27 +22,28 @@ import static de.kairos.fhir.centraxx.metamodel.RootEntities.studyVisitItem
  */
 
 observation {
-  final def studyCode = context.source[studyVisitItem().studyMember().study().code()]
-  if (studyCode != "GECCO FINAL") {
+  final def studyMember = context.source[laborMapping().relatedPatient().studyMembers()].find {
+    it[StudyMember.STUDY][FlexiStudy.CODE] == "GECCO FINAL"
+  }
+  if (!studyMember) {
     return //no export
   }
-  final def crfName = context.source[studyVisitItem().template().crfTemplate().name()]
-  final def studyVisitStatus = context.source[studyVisitItem().status()]
-  if (crfName != "SarsCov2_VITALPARAMETER" || studyVisitStatus == "OPEN") {
+  final def profileName = context.source[laborMapping().laborFinding().laborMethod().code()]
+  if (profileName != "COV_GECCO_VITALPARAMTER") {
     return //no export
   }
 
-  final def labValDia = context.source[studyVisitItem().crf().items()].find {
-    "COV_GECCO_BLUTDRUCK_DIA" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
+  final def labValDia = context.source[laborMapping().laborFinding().laborFindingLaborValues()].find {
+    "COV_GECCO_BLUTDRUCK_DIA" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
   }
-  final def labValSys = context.source[studyVisitItem().crf().items()].find {
-    "COV_GECCO_BLUTDRUCK_SYS" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
+  final def labValSys = context.source[laborMapping().laborFinding().laborFindingLaborValues()].find {
+    "COV_GECCO_BLUTDRUCK_SYS" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
   }
   if (!labValDia && !labValSys) {
     return
   }
 
-  id = "Observation/BloodPressure-" + context.source[studyVisitItem().crf().id()]
+  id = "Observation/BloodPressure-" + context.source[laborMapping().id()]
 
   meta {
     source = "https://fhir.centraxx.de"
@@ -73,16 +74,16 @@ observation {
   }
 
   subject {
-    reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
+    reference = "Patient/Patient-" + context.source[laborMapping().relatedPatient().idContainer()]["psn"][0]
   }
 
   effectiveDateTime {
-    date = normalizeDate(labValSys[CrfItem.CREATIONDATE] as String)
+    date = normalizeDate(context.source[laborMapping().creationDate()] as String)
     precision = TemporalPrecisionEnum.DAY.toString()
   }
 
   // Systolic Blood pressure
-  def numValSys = labValSys[CrfItem.NUMERIC_VALUE]
+  def numValSys = labValSys[LaborFindingLaborValue.NUMERIC_VALUE]
   if (numValSys) {
     component {
       code {
@@ -108,7 +109,7 @@ observation {
   }
 
   // Diastolic Blood pressure
-  def numValDia = labValDia[CrfItem.NUMERIC_VALUE]
+  def numValDia = labValDia[LaborFindingLaborValue.NUMERIC_VALUE]
   if (numValDia) {
     component {
       code {

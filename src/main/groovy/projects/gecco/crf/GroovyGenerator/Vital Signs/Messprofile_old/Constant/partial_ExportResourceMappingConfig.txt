@@ -1,56 +1,56 @@
 
     {
-        "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+        "selectFromCxxEntity": "LABOR_MAPPING",
         "transformByTemplate": "observationPaO2",
         "exportToFhirResource": "Observation"
     },
     {
-      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "selectFromCxxEntity": "LABOR_MAPPING",
       "transformByTemplate": "observationPaCO2",
       "exportToFhirResource": "Observation"
     },
     {
-      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "selectFromCxxEntity": "LABOR_MAPPING",
       "transformByTemplate": "observationFiO2",
       "exportToFhirResource": "Observation"
     },
     {
-      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "selectFromCxxEntity": "LABOR_MAPPING",
       "transformByTemplate": "observationPeriOxySat",
       "exportToFhirResource": "Observation"
     },
     {
-      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "selectFromCxxEntity": "LABOR_MAPPING",
       "transformByTemplate": "observationPH",
       "exportToFhirResource": "Observation"
     },
     {
-      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "selectFromCxxEntity": "LABOR_MAPPING",
       "transformByTemplate": "observationBloodGasPanel",
       "exportToFhirResource": "Observation"
     },
     {
-      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "selectFromCxxEntity": "LABOR_MAPPING",
       "transformByTemplate": "observationBloodPressure",
       "exportToFhirResource": "Observation"
     },
     {
-      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "selectFromCxxEntity": "LABOR_MAPPING",
       "transformByTemplate": "observationBodyTemp",
       "exportToFhirResource": "Observation"
     },
     {
-      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "selectFromCxxEntity": "LABOR_MAPPING",
       "transformByTemplate": "observationHeartRate",
       "exportToFhirResource": "Observation"
     },
     {
-      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "selectFromCxxEntity": "LABOR_MAPPING",
       "transformByTemplate": "observationRespiratoryRate",
       "exportToFhirResource": "Observation"
     },
     {
-      "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+      "selectFromCxxEntity": "LABOR_MAPPING",
       "transformByTemplate": "observationSofaScore",
       "exportToFhirResource": "Observation"
     },

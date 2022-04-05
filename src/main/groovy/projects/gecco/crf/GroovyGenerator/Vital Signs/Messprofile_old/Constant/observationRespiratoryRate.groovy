@@ -22,42 +22,30 @@ import static de.kairos.fhir.centraxx.metamodel.RootEntities.studyVisitItem
  */
 
 observation {
-  final def studyCode = context.source[studyVisitItem().studyMember().study().code()]
-  if (studyCode != "GECCO FINAL") {
-    return //no export
+  final def studyMember = context.source[laborMapping().relatedPatient().studyMembers()].find {
+    it[StudyMember.STUDY][FlexiStudy.CODE] == "GECCO FINAL"
   }
-  final def crfName = context.source[studyVisitItem().template().crfTemplate().name()]
-  final def studyVisitStatus = context.source[studyVisitItem().status()]
-  if (crfName != "SarsCov2_VITALPARAMETER" || studyVisitStatus == "OPEN") {
+  if (!studyMember) {
     return //no export
   }
 
-  final def labVal = context.source[studyVisitItem().crf().items()].find {
-    "COV_GECCO_ATEMFREQUENZ" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
+  final def profileName = context.source[laborMapping().laborFinding().laborMethod().code()]
+  if (profileName != "COV_GECCO_VITALPARAMTER") {
+    return //no export
   }
-  if (!labVal[CrfItem.NUMERIC_VALUE]) {
+
+  final def labVal = context.source[laborMapping().laborFinding().laborFindingLaborValues()].find {
+    "COV_GECCO_ATEMFREQUENZ" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
+  }
+  if (!labVal || !labVal[LaborFindingLaborValue.NUMERIC_VALUE]) {
     return
   }
 
-  id = "Observation/RespiratoryRate-" + context.source[studyVisitItem().crf().id()]
+  id = "Observation/RespiratoryRate-" + context.source[laborMapping().id()]
 
   meta {
     source = "https://fhir.centraxx.de"
     profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/respiratory-rate"
-  }
-
-  identifier {
-    type{
-      coding {
-        system = "http://terminology.hl7.org/CodeSystem/v2-0203"
-        code = "OBI"
-      }
-    }
-    system = "http://www.acme.com/identifiers/patient"
-    value = "Observation/RespiratoryRate-" + context.source[studyVisitItem().crf().id()]
-    assigner {
-      reference = "Assigner/" + context.source[studyVisitItem().crf().creator().id()]
-    }
   }
 
   status = Observation.ObservationStatus.UNKNOWN
@@ -84,16 +72,16 @@ observation {
   }
 
   subject {
-    reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
+    reference = "Patient/Patient-" + context.source[laborMapping().relatedPatient().idContainer()]["psn"][0]
   }
 
   effectiveDateTime {
-    date = normalizeDate(labVal[CrfItem.CREATIONDATE] as String)
+    date = normalizeDate(context.source[laborMapping().creationDate()] as String)
     precision = TemporalPrecisionEnum.DAY.toString()
   }
 
   valueQuantity {
-    value = labVal[CrfItem.NUMERIC_VALUE]
+    value = labVal[LaborFindingLaborValue.NUMERIC_VALUE]
     unit = "per minute"
     system = "http://unitsofmeasure.org"
     code = "/min"

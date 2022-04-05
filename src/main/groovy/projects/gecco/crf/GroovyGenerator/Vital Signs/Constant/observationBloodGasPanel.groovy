@@ -22,30 +22,29 @@ import static de.kairos.fhir.centraxx.metamodel.RootEntities.studyVisitItem
  */
 
 observation {
-  final def studyMember = context.source[laborMapping().relatedPatient().studyMembers()].find {
-    it[StudyMember.STUDY][FlexiStudy.CODE] == "GECCO FINAL"
-  }
-  if (!studyMember) {
+  final def studyCode = context.source[studyVisitItem().studyMember().study().code()]
+  if (studyCode != "GECCO FINAL") {
     return //no export
   }
-  final def profileName = context.source[laborMapping().laborFinding().laborMethod().code()]
-  if (profileName != "COV_GECCO_VITALPARAMTER") {
+  final def crfName = context.source[studyVisitItem().template().crfTemplate().name()]
+  final def studyVisitStatus = context.source[studyVisitItem().status()]
+  if (crfName != "SarsCov2_VITALPARAMETER" || studyVisitStatus == "OPEN") {
     return //no export
   }
-  final def labValPaO2 = context.source[laborMapping().laborFinding().laborFindingLaborValues()].find {
-    "COV_GECCO_PAO2" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
+  final def labValPaO2 = context.source[studyVisitItem().crf().items()].find {
+    "COV_GECCO_PAO2" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
   }
-  final def labValPaCO2 = context.source[laborMapping().laborFinding().laborFindingLaborValues()].find {
-    "COV_GECCO_PACO2" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
+  final def labValPaCO2 = context.source[studyVisitItem().crf().items()].find {
+    "COV_GECCO_PACO2" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
   }
-  final def labValFiO2 = context.source[laborMapping().laborFinding().laborFindingLaborValues()].find {
-    "COV_GECCO_FIO2" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
+  final def labValFiO2 = context.source[studyVisitItem().crf().items()].find {
+    "COV_GECCO_FIO2" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
   }
-  final def labValOxySat = context.source[laborMapping().laborFinding().laborFindingLaborValues()].find {
-    "COV_GECCO_PERI_O2" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
+  final def labValOxySat = context.source[studyVisitItem().crf().items()].find {
+    "COV_GECCO_PERI_O2" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
   }
-  final def labVal_pH = context.source[laborMapping().laborFinding().laborFindingLaborValues()].find {
-    "COV_GECCO_PH_BLUT" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
+  final def labVal_pH = context.source[studyVisitItem().crf().items()].find {
+    "COV_GECCO_PH_BLUT" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
   }
 
   if (!labValPaO2 &&
@@ -56,6 +55,13 @@ observation {
     return //no export
   }
 
+  id = "Observation/GasPanel-" + context.source[studyVisitItem().crf().id()]
+
+  meta {
+    source = "https://fhir.centraxx.de"
+    profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/blood-gas-panel"
+  }
+
   identifier {
     type{
       coding {
@@ -64,17 +70,10 @@ observation {
       }
     }
     system = "http://www.acme.com/identifiers/patient"
-    value = "Observation/BloodGasPanel-" + context.source[laborMapping().id()]
+    value = "Observation/PaO2-" + context.source[studyVisitItem().crf().id()]
     assigner {
-      reference = "Assigner/" + context.source[laborMapping().creator().id()]
+      reference = "Assigner/" + context.source[studyVisitItem().crf().creator().id()]
     }
-  }
-
-  id = "Observation/BloodGasPanel-" + context.source[laborMapping().id()]
-
-  meta {
-    source = "https://fhir.centraxx.de"
-    profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/blood-gas-panel"
   }
 
   status = Observation.ObservationStatus.UNKNOWN
@@ -104,37 +103,42 @@ observation {
   }
 
   subject {
-    reference = "Patient/Patient-" + context.source[laborMapping().relatedPatient().idContainer()]["psn"][0]
+    reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
   }
 
-  effectiveDateTime {
-    date = normalizeDate(context.source[laborMapping().creationDate()] as String)
-    precision = TemporalPrecisionEnum.DAY.toString()
+  for (labVal in [labValPaO2, labValPaCO2, labValFiO2, labValOxySat, labVal_pH]) {
+    if(labVal){
+      effectiveDateTime {
+        date = normalizeDate(labVal[CrfItem.CREATIONDATE] as String)
+        precision = TemporalPrecisionEnum.DAY.toString()
+      }
+      break
+    }
   }
 
   if(labValPaO2){
     hasMember {
-      reference = "Observation/PaO2-" + context.source[laborMapping().id()]
+      reference = "Observation/PaO2-" + context.source[studyVisitItem().crf().id()]
     }
   }
   if(labValPaCO2){
     hasMember {
-      reference = "Observation/PaCO2-" + context.source[laborMapping().id()]
+      reference = "Observation/PaCO2-" + context.source[studyVisitItem().crf().id()]
     }
   }
   if(labValFiO2){
     hasMember {
-      reference = "Observation/FiO2-" + context.source[laborMapping().id()]
+      reference = "Observation/FiO2-" + context.source[studyVisitItem().crf().id()]
     }
   }
   if(labValOxySat){
     hasMember {
-      reference = "Observation/PeriO2Saturation-" + context.source[laborMapping().id()]
+      reference = "Observation/PeriO2Saturation-" + context.source[studyVisitItem().crf().id()]
     }
   }
   if(labVal_pH){
     hasMember {
-      reference = "Observation/pH-" + context.source[laborMapping().id()]
+      reference = "Observation/pH-" + context.source[studyVisitItem().crf().id()]
     }
   }
 }

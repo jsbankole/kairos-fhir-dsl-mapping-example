@@ -15,48 +15,58 @@ import static de.kairos.fhir.centraxx.metamodel.RootEntities.studyVisitItem
 
 /**
  * Represented by a CXX StudyVisitItem
- * Specified by https://simplifier.net/forschungsnetzcovid-19/gaspanel-pao2
- * @author Lukas Reinert
+ * Specified by https://simplifier.net/forschungsnetzcovid-19/sarscov2igaserpliaacnc
+ * @author Lukas Reinert, Mike Wähnert
  * @since KAIROS-FHIR-DSL.v.1.9.0, CXX.v.3.18.1.7
  *
+ * hints:
+ *  A StudyEpisode is no regular episode and cannot reference an encounter
  */
 
 observation {
-  final def studyCode = context.source[studyVisitItem().studyMember().study().code()]
-  if (studyCode != "GECCO FINAL") {
-    return //no export
+  final def studyMember = context.source[laborMapping().relatedPatient().studyMembers()].find {
+    it[StudyMember.STUDY][FlexiStudy.CODE] == "GECCO FINAL"
   }
-  final def crfName = context.source[studyVisitItem().template().crfTemplate().name()]
-  final def studyVisitStatus = context.source[studyVisitItem().status()]
-  if (crfName != "SarsCov2_VITALPARAMETER" || studyVisitStatus == "OPEN") {
+  if (!studyMember) {
     return //no export
   }
 
-  final def labVal = context.source[studyVisitItem().crf().items()].find {
-    "COV_GECCO_PAO2" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
+  final def profileName = context.source[laborMapping().laborFinding().laborMethod().code()]
+  if (profileName != "COV_GECOO_LABOR") {
+    return //no export
   }
-  if (!labVal[CrfItem.NUMERIC_VALUE]) {
+
+  final def labValAb = context.source[laborMapping().laborFinding().laborFindingLaborValues()].find {
+    "COV_GECCO_SARS_COV_2_IGG_IA" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
+  }
+  if (!labValAb) {
     return
   }
 
-  id = "Observation/PaO2-" + context.source[studyVisitItem().crf().id()]
+  def numVal =labValAb[LaborFindingLaborValue.NUMERIC_VALUE]
+  if (!numVal){
+    return
+  }
+
+  id = "Observation/SARSCoV2-IGG-IA-" + context.source[laborMapping().id()]
 
   meta {
     source = "https://fhir.centraxx.de"
-    profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/oxygen-partial-pressure"
+    profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/sars-cov-2-iga-ser-pl-ia-acnc"
   }
 
+  // TODO check identifier
   identifier {
-    type{
+    type {
       coding {
         system = "http://terminology.hl7.org/CodeSystem/v2-0203"
         code = "OBI"
       }
     }
-    system = "http://www.acme.com/identifiers/patient"
-    value = "Observation/PaO2-" + context.source[studyVisitItem().crf().id()]
+    system = "https://www.charite.de/fhir/CodeSystem/lab-identifiers"
+    value = "94504-8_SARS-CoV-2-Ab-Panel"
     assigner {
-      reference = "Assigner/" + context.source[studyVisitItem().crf().creator().id()]
+      reference = "Organization/Charité"
     }
   }
 
@@ -71,35 +81,34 @@ observation {
       system = "http://terminology.hl7.org/CodeSystem/observation-category"
       code = "laboratory"
     }
-    coding {
-      system = "http://loinc.org"
-      code = "18767-4"
-    }
   }
 
   code {
     coding {
       system = "http://loinc.org"
-      code = "11556-8"
+      code = "94720-0"
+      display = "SARS-CoV-2 (COVID-19) IgA Ab [Units/volume] in Serum or Plasma by Immunoassay"
     }
-  }
-
-  subject {
-    reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
+    text = "SARS-CoV-2 IgA antibodies quantitative"
   }
 
   effectiveDateTime {
-    date = normalizeDate(labVal[CrfItem.CREATIONDATE] as String)
+    date = normalizeDate(context.source[laborMapping().creationDate()] as String)
     precision = TemporalPrecisionEnum.DAY.toString()
   }
 
+  subject {
+    reference = "Patient/Patient-" + context.source[laborMapping().relatedPatient().idContainer()]["psn"][0]
+  }
+
   valueQuantity {
-    value = labVal[CrfItem.NUMERIC_VALUE]
-    unit = "mmHg"
+    value = numVal
+    unit = "[IU]/mL"
     system = "http://unitsofmeasure.org"
-    code = "mm[Hg]"
+    code = "[IU]/mL"
   }
 }
+
 
 static String normalizeDate(final String dateTimeString) {
   return dateTimeString != null ? dateTimeString.substring(0, 19) : null

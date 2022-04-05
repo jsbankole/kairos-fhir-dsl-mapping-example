@@ -1,8 +1,6 @@
 package projects.gecco.crf.labVital
 
 import ca.uhn.fhir.model.api.TemporalPrecisionEnum
-import de.kairos.fhir.centraxx.metamodel.CrfItem
-import de.kairos.fhir.centraxx.metamodel.CrfTemplateField
 import de.kairos.fhir.centraxx.metamodel.FlexiStudy
 import de.kairos.fhir.centraxx.metamodel.LaborFindingLaborValue
 import de.kairos.fhir.centraxx.metamodel.LaborValue
@@ -20,24 +18,27 @@ import static de.kairos.fhir.centraxx.metamodel.RootEntities.studyVisitItem
  *
  */
 observation {
-  final def studyCode = context.source[studyVisitItem().studyMember().study().code()]
-  if (studyCode != "GECCO FINAL") {
-    return //no export
+
+  final def studyMember = context.source[laborMapping().relatedPatient().studyMembers()].find {
+    it[StudyMember.STUDY][FlexiStudy.CODE] == "GECCO FINAL"
   }
-  final def crfName = context.source[studyVisitItem().template().crfTemplate().name()]
-  final def studyVisitStatus = context.source[studyVisitItem().status()]
-  if (crfName != "SarsCov2_VITALPARAMETER" || studyVisitStatus == "OPEN") {
+  if (!studyMember) {
     return //no export
   }
 
-  final def labVal = context.source[studyVisitItem().crf().items()].find {
-    "COV_GECCO_KOERPERTEMPERATURE" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
-  }
-  if (!labVal[CrfItem.NUMERIC_VALUE]) {
+  final def profileName = context.source[laborMapping().laborFinding().laborMethod().code()]
+  if (profileName != "COV_GECCO_VITALPARAMTER") {
     return //no export
   }
 
-  id = "Observation/BodyTemp-" + context.source[studyVisitItem().crf().id()]
+  final def labVal = context.source[laborMapping().laborFinding().laborFindingLaborValues()].find {
+    "COV_GECCO_FIO2" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
+  }
+  if (!labVal || !labVal[LaborFindingLaborValue.NUMERIC_VALUE]) {
+    return //no export
+  }
+
+  id = "Observation/FiO2-" + context.source[laborMapping().id()]
 
   meta {
     source = "https://fhir.centraxx.de"
@@ -52,9 +53,9 @@ observation {
       }
     }
     system = "http://www.acme.com/identifiers/patient"
-    value = "Observation/BodyTemp-" + context.source[studyVisitItem().crf().id()]
+    value = "Observation/PaCO2-" + context.source[laborMapping().id()]
     assigner {
-      reference = "Assigner/" + context.source[studyVisitItem().crf().creator().id()]
+      reference = "Assigner/" + context.source[laborMapping().creator().id()]
     }
   }
 
@@ -82,16 +83,16 @@ observation {
   }
 
   subject {
-    reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
+    reference = "Patient/Patient-" + context.source[laborMapping().relatedPatient().idContainer()]["psn"][0]
   }
 
   effectiveDateTime {
-    date = normalizeDate(labVal[CrfItem.CREATIONDATE] as String)
+    date = normalizeDate(context.source[laborMapping().creationDate()] as String)
     precision = TemporalPrecisionEnum.DAY.toString()
   }
 
   valueQuantity {
-    value = labVal[CrfItem.NUMERIC_VALUE]
+    value = labVal[LaborFindingLaborValue.NUMERIC_VALUE]
     unit = "°C"
     system = "http://unitsofmeasure.org"
     code = "Cel"
