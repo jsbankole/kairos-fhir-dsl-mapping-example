@@ -22,27 +22,35 @@ import static de.kairos.fhir.centraxx.metamodel.RootEntities.studyVisitItem
  */
 
 observation {
-  final def studyCode = context.source[studyVisitItem().studyMember().study().code()]
-  if (studyCode != "GECCO FINAL") {
-    return //no export
+
+  final def studyMember = context.source[laborMapping().relatedPatient().studyMembers()].find {
+    it[StudyMember.STUDY][FlexiStudy.CODE] == "GECCO FINAL"
   }
-  final def crfName = context.source[studyVisitItem().template().crfTemplate().name()]
-  final def studyVisitStatus = context.source[studyVisitItem().status()]
-  if (crfName != "SarsCov2_LABORPARAMETER" || studyVisitStatus == "OPEN") {
+  if (!studyMember) {
     return //no export
   }
 
-  final def labVal = context.source[studyVisitItem().crf().items()].find {
-    "##ParameterCodeValue##" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
+  final def profileName = context.source[laborMapping().laborFinding().laborMethod().code()]
+  if (profileName != "COV_GECOO_LABOR") {
+    return //no export
   }
-  if (!labVal || !labVal[CrfItem.NUMERIC_VALUE]) {
+
+  final def lFlV = context.source[laborMapping().laborFinding().laborFindingLaborValues()].find {
+    "##ParameterCodeValue##" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
+  }
+  if (!lFlV) {
+    return
+  }
+
+  def numVal =lFlV[LaborFindingLaborValue.NUMERIC_VALUE]
+  if (!numVal){
     return
   }
 
   final def numID = context.source[laborMapping().id()]
-  final String labValID = labVal[CrfItem.TEMPLATE][CrfTemplateField.LABOR_VALUE][LaborValue.ID]
+  final String labValID = lFlV[LaborFindingLaborValue.LABOR_VALUE][LaborValue.ID]
 
-  id = "Observation/LaborValue-##IdComplement##-" + labValID + "-" + numID
+  id = "Observation/LaborValue-" + "##IdComplement##" + "-" + labValID + "-" + numID
 
   meta {
     source = "https://fhir.centraxx.de"
@@ -59,7 +67,7 @@ observation {
     system = "http://www.acme.com/identifiers/patient"
     value = "Observation/LaborValue-" + labValID + "-" + numID
     assigner {
-      reference = "Assigner/" + context.source[studyVisitItem().crf().creator().id()]
+      reference = "Assigner/" + context.source[laborMapping().creator().id()]
     }
   }
 
@@ -86,16 +94,16 @@ observation {
   }
 
   subject {
-    reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
+    reference = "Patient/Patient-" + context.source[laborMapping().relatedPatient().idContainer()]["psn"][0]
   }
 
   effectiveDateTime {
-    date = normalizeDate(labVal[CrfItem.CREATIONDATE] as String)
+    date = normalizeDate(context.source[laborMapping().creationDate()] as String)
     precision = TemporalPrecisionEnum.DAY.toString()
   }
 
   valueQuantity {
-    value = labVal[CrfItem.NUMERIC_VALUE]
+    value = numVal
     unit = "##Unit##"
     system = "http://unitsofmeasure.org"
     code = "##Unit##"

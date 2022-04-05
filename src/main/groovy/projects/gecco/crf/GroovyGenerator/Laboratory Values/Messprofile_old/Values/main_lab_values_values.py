@@ -40,7 +40,7 @@ for _, row in values_df.iterrows():
     with open(aux_file_name, "a") as f:
         append_str = f"""
     {{
-        "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+        "selectFromCxxEntity": "LABOR_MAPPING",
         "transformByTemplate": "{new_file_name}",
         "exportToFhirResource": "Observation"
     }},"""

@@ -1,11 +1,11 @@
 
     {
-        "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+        "selectFromCxxEntity": "LABOR_MAPPING",
         "transformByTemplate": "observationSarsCov2RT_PCRLabParam",
         "exportToFhirResource": "Observation"
     },
     {
-        "selectFromCxxEntity": "STUDY_VISIT_ITEM",
+        "selectFromCxxEntity": "LABOR_MAPPING",
         "transformByTemplate": "observationSarsAntibodyIGA",
         "exportToFhirResource": "Observation"
     },

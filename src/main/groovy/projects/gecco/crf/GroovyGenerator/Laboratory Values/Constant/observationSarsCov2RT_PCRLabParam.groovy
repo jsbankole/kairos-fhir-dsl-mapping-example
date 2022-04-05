@@ -24,25 +24,24 @@ import static de.kairos.fhir.centraxx.metamodel.RootEntities.studyVisitItem
  */
 
 observation {
-  final def studyMember = context.source[laborMapping().relatedPatient().studyMembers()].find{
-    it[StudyMember.STUDY][FlexiStudy.CODE] == "GECCO FINAL"
-  }
-  if (!studyMember) {
+  final def studyCode = context.source[studyVisitItem().studyMember().study().code()]
+  if (studyCode != "GECCO FINAL") {
     return //no export
   }
-  final def profileName = context.source[laborMapping().laborFinding().laborMethod().code()]
-  if (profileName != "COV_GECOO_LABOR") {
+  final def crfName = context.source[studyVisitItem().template().crfTemplate().name()]
+  final def studyVisitStatus = context.source[studyVisitItem().status()]
+  if (crfName != "SarsCov2_LABORPARAMETER" || studyVisitStatus == "OPEN") {
     return //no export
   }
 
-  final def labValDisc = context.source[laborMapping().laborFinding().laborFindingLaborValues()].find {
-    "COV_GECCO_SARS_COV_2_PCR" == it[LaborFindingLaborValue.LABOR_VALUE][LaborValue.CODE]
+  final def labVal = context.source[studyVisitItem().crf().items()].find {
+    "COV_GECCO_SARS_COV_2_PCR" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
   }
-  if (!labValDisc) {
+  if (!labVal) {
     return
   }
 
-  id = "Observation/SarsCov2RT-PCR-" + context.source[laborMapping().id()]
+  id = "Observation/SarsCov2RT-PCR-" + context.source[studyVisitItem().crf().id()]
 
   meta {
     source = "https://fhir.centraxx.de"
@@ -58,9 +57,9 @@ observation {
       }
     }
     system = "https://www.charite.de/fhir/CodeSystem/lab-identifiers"
-    value = "94500-6_SARS-CoV-2-RNA-Presence-in-Respiratory-specimen"
+    value = "Observation/SarsCov2RT-PCR-" + context.source[studyVisitItem().crf().id()]  // "94500-6_SARS-CoV-2-RNA-Presence-in-Respiratory-specimen"
     assigner {
-      reference = "Organization/Charité"
+      reference = "Assigner/" + context.source[studyVisitItem().crf().creator().id()]  // "Organization/Charité"
     }
   }
 
@@ -86,17 +85,17 @@ observation {
   }
 
   effectiveDateTime {
-    date = normalizeDate(context.source[laborMapping().creationDate()] as String)
+    date = normalizeDate(labVal[CrfItem.CREATIONDATE] as String)
     precision = TemporalPrecisionEnum.DAY.toString()
   }
 
   subject {
-    reference = "Patient/Patient-" + context.source[laborMapping().relatedPatient().idContainer()]["psn"][0]
+    reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
   }
 
   //Vaccine codes
   valueCodeableConcept {
-    labValDisc[LaborFindingLaborValue.CATALOG_ENTRY_VALUE].each{ final catEntry ->
+    labVal[CrfItem.CATALOG_ENTRY_VALUE].each{ final catEntry ->
       final def res = mapDiscSNOMED(catEntry[CatalogEntry.CODE] as String)
       coding {
         system = "http://snomed.info/sct"
