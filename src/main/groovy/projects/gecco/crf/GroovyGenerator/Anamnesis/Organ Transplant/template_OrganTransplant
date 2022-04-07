@@ -31,7 +31,11 @@ condition {
 
   final def crfItemOrgan_General = context.source[studyVisitItem().crf().items()].find {
       "COV_GECCO_ORGANTRANSPLANTATION" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
-    }
+  }
+
+  if (crfItemOrgan_General[CrfItem.CATALOG_ENTRY_VALUE] == []) {
+    return
+  }
 
   final def VERcodeG = crfItemOrgan_General[CrfItem.CATALOG_ENTRY_VALUE][0][CatalogEntry.CODE]
 
