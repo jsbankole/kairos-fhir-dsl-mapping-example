@@ -37,7 +37,7 @@ immunization {
     iter == it[CrfItem.VALUE_INDEX] as int && "COV_GECCO_IMPFUNGEN_DATUM" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
   }
 
-  if (!crfItemImpf || crfItemImpfDatum) {
+  if (!crfItemImpf || !crfItemImpfDatum) {
     return
   }
 
@@ -72,16 +72,15 @@ immunization {
     date = normalizeDate(crfItemImpfDatum[CrfItem.DATE_VALUE][PrecisionDate.DATE][0] as String)
   }
 
-//  protocolApplied {
-//    targetDisease {
-//      coding {
-//        system = "http://snomed.info/sct"
-//        code = "840539006"
-//        display = "Disease caused by Severe acute respiratory syndrome coronavirus 2 (disorder)"
-//      }
-//    }
-//  }
-
+  protocolApplied {
+    targetDisease {
+      coding {
+        system = "http://snomed.info/sct"
+        code = "840539006"
+        display = "Disease caused by Severe acute respiratory syndrome coronavirus 2 (disorder)"
+      }
+    }
+  }
 }
 
 static String normalizeDate(final String dateTimeString) {
