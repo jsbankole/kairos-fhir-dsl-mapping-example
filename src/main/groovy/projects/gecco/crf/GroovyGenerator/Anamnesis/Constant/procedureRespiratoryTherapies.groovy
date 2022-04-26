@@ -51,7 +51,7 @@ procedure {
           }
 
           performedDateTime {
-            if(crfItemRespTheraDate[CrfItem.DATE_VALUE]){
+            if(crfItemRespTheraDate && crfItemRespTheraDate[CrfItem.DATE_VALUE]){
               date = crfItemRespTheraDate[CrfItem.DATE_VALUE].toString().substring(6, 16)
             }else{
               extension {
