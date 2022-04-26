@@ -32,12 +32,12 @@ procedure {
     return
   }
 
-  String[] STATUS = [null, null]
+  String STATUScode = null
   crfItemRespProne[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item ->
-    STATUS = matchResponseToSTATUS(item[CatalogEntry.CODE] as String)
+    STATUScode = matchResponseToSTATUS(item[CatalogEntry.CODE] as String)
   }
 
-  if (!STATUS[0]){
+  if (!STATUScode){
     return
   }
 
@@ -48,7 +48,7 @@ procedure {
     profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/prone-position"
   }
 
-  status = STATUS[0]
+  status = STATUScode
 
   category {
     coding {
@@ -69,15 +69,21 @@ procedure {
   }
 
   performedDateTime {
-    if(STATUS[0] != "in-progress"){
+    if(STATUScode == "in-progress"){
+      date = normalizeDate(context.source[studyVisitItem().crf().creationDate()] as String)
+      precision = TemporalPrecisionEnum.DAY.toString()
+    }
+    else if(STATUScode == "not-done"){
+      extension {
+        url = "http://hl7.org/fhir/StructureDefinition/data-absent-reason"
+        valueCode = "not-performed"
+      }
+    }
+    else{
       extension {
         url = "http://hl7.org/fhir/StructureDefinition/data-absent-reason"
         valueCode = "unknown"
       }
-    }
-    else{
-      date = normalizeDate(context.source[studyVisitItem().crf().creationDate()] as String)
-      precision = TemporalPrecisionEnum.DAY.toString()
     }
   }
 }
@@ -86,14 +92,14 @@ static String normalizeDate(final String dateTimeString) {
   return dateTimeString != null ? dateTimeString.substring(0, 19) : null
 }
 
-static String[] matchResponseToSTATUS(final String resp) {
+static String matchResponseToSTATUS(final String resp) {
   switch (resp) {
     case ("COV_JA"):
-      return ["in-progress", ""]
+      return "in-progress"
     case ("COV_NEIN"):
-      return ["not-done", "not-performed"]
+      return "not-done"
     case ("COV_UNBEKANNT"):
-      return ["unknown", "unknown"]
-    default: [null, null]
+      return "unknown"
+    default: null
   }
 }

@@ -24,56 +24,73 @@ procedure {
   if (crfName != "SarsCov2_THERAPIE" || studyVisitStatus == "OPEN") {
     return //no export
   }
-  final def crfItemRespThera = context.source[studyVisitItem().crf().items()].find {
+  final def crfItemRespHemo = context.source[studyVisitItem().crf().items()].find {
     "COV_GECCO_DIALYSE" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
   }
-  if (!crfItemRespThera) {
+  if (!crfItemRespHemo || crfItemRespHemo[CrfItem.CATALOG_ENTRY_VALUE] == []) {
     return
   }
-  if (crfItemRespThera[CrfItem.CATALOG_ENTRY_VALUE] != []) {
-    id = "Procedure/Dialyse-" + context.source[studyVisitItem().id()]
 
-    meta {
-      source = "https://fhir.centraxx.de"
-      profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/dialysis"
+  String STATUScode = null
+  crfItemRespHemo[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item ->
+    STATUScode = matchResponseToSTATUS(item[CatalogEntry.CODE] as String)
+  }
+
+  if (!STATUScode){
+    return
+  }
+
+  id = "Procedure/Dialyse-" + context.source[studyVisitItem().id()]
+
+  meta {
+    source = "https://fhir.centraxx.de"
+    profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/dialysis"
+  }
+
+  status = STATUScode
+
+  category {
+    coding {
+      system = "http://snomed.info/sct"
+      code = "277132007"
+      display = "Therapeutic procedure (procedure)"
     }
+  }
 
-    crfItemRespThera[CrfItem.CATALOG_ENTRY_VALUE]?.each { final item ->
-      final def STATUScode = matchResponseToSTATUS(item[CatalogEntry.CODE] as String)
-      if (STATUScode) {
-        status = STATUScode
-      }
+  code {
+    coding {
+      system = "http://fhir.de/CodeSystem/dimdi/ops"
+      code = "8-85"
+      version = "2021"
     }
-
-    category {
-      coding {
-        system = "http://snomed.info/sct"
-        code = "277132007"
-        display = "Therapeutic procedure (procedure)"
-      }
+    coding {
+      system = "http://snomed.info/sct"
+      code = "108241001"
+      display = "Dialysis procedure (procedure)"
     }
+    text = "Dialysis"
+  }
 
-    code {
-      coding {
-        system = "http://fhir.de/CodeSystem/dimdi/ops"
-        code = "8-85"
-        version = "2021"
-      }
-      coding {
-        system = "http://snomed.info/sct"
-        code = "108241001"
-        display = "Dialysis procedure (procedure)"
-      }
-      text = "Dialysis"
-    }
+  subject {
+    reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
+  }
 
-    subject {
-      reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
-    }
-
-    performedDateTime {
+  performedDateTime {
+    if(STATUScode == "in-progress"){
       date = normalizeDate(context.source[studyVisitItem().crf().creationDate()] as String)
       precision = TemporalPrecisionEnum.DAY.toString()
+    }
+    else if(STATUScode == "not-done"){
+      extension {
+        url = "http://hl7.org/fhir/StructureDefinition/data-absent-reason"
+        valueCode = "not-performed"
+      }
+    }
+    else{
+      extension {
+        url = "http://hl7.org/fhir/StructureDefinition/data-absent-reason"
+        valueCode = "unknown"
+      }
     }
   }
 }

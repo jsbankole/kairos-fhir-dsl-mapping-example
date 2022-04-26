@@ -78,8 +78,22 @@ procedure {
   }
 
   performedDateTime {
-    date = normalizeDate(context.source[studyVisitItem().crf().creationDate()] as String)
-    precision = TemporalPrecisionEnum.DAY.toString()
+    if(fields[4] == "in-progress"){
+      date = normalizeDate(context.source[studyVisitItem().crf().creationDate()] as String)
+      precision = TemporalPrecisionEnum.DAY.toString()
+    }
+    else if(fields[4] == "not-done"){
+      extension {
+        url = "http://hl7.org/fhir/StructureDefinition/data-absent-reason"
+        valueCode = "not-performed"
+      }
+    }
+    else{
+      extension {
+        url = "http://hl7.org/fhir/StructureDefinition/data-absent-reason"
+        valueCode = "unknown"
+      }
+    }
   }
 }
 
