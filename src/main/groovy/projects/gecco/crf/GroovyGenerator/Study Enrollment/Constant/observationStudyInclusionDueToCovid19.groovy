@@ -23,9 +23,10 @@ observation {
   }
   final def crfName = context.source[studyVisitItem().template().crfTemplate().name()]
   final def studyVisitStatus = context.source[studyVisitItem().status()]
-  if (crfName != "SarsCov2_STUDIENEINSCHLUSS / EINSCHLUSSKRITERIEN" || studyVisitStatus == "OPEN") {
+  if (crfName != "SarsCov2_STUDIENEINSCHLUSS / EINSCHLUSSKRITERIEN" || studyVisitStatus != "APPROVED") {
     return //no export
   }
+
   final def crfItemStudy = context.source[studyVisitItem().crf().items()].find {
     "COV_GECCO_STUDIENEINSCHLUSS" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
   }

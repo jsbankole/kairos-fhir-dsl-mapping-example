@@ -24,7 +24,7 @@ observation {
   }
   final def crfName = context.source[studyVisitItem().template().crfTemplate().name()]
   final def studyVisitStatus = context.source[studyVisitItem().status()]
-  if (crfName != "SarsCov2_THERAPIE" || studyVisitStatus == "OPEN") {
+  if (crfName != "SarsCov2_THERAPIE" || studyVisitStatus != "APPROVED") {
     return //no export
   }
   final def crfItemPatinICU = context.source[studyVisitItem().crf().items()].find {

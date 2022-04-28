@@ -25,9 +25,10 @@ diagnosticReport {
   }
   final def crfName = context.source[studyVisitItem().template().crfTemplate().name()]
   final def studyVisitStatus = context.source[studyVisitItem().status()]
-  if (crfName != "SarsCov2_BILDGEBUNG" || studyVisitStatus == "OPEN") {
+  if (crfName != "SarsCov2_BILDGEBUNG" || studyVisitStatus != "APPROVED") {
     return //no export
   }
+
   final def crfItemFinding = context.source[studyVisitItem().crf().items()].find {
     "COV_GECCO_BEFUND_BILD_LUNGE" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
   }
