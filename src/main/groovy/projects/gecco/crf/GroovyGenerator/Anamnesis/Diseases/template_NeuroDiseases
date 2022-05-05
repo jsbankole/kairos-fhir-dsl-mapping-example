@@ -117,9 +117,9 @@ condition {
     if (ICDcode != "") {
       coding {
         system = "http://fhir.de/CodeSystem/dimdi/icd-10-gm"
-        version = "2020"
+    //    version = "2020"
         code = ICDcode
-        display = "##DiseaseName-EN##"
+    //    display = "##DiseaseName-EN##"
       }
     }
 
