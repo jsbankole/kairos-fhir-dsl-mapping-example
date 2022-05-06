@@ -83,8 +83,8 @@ condition {
   category {
     coding {
       system = "http://snomed.info/sct"
-      code = "722414000"
-      display = "Vascular medicine"
+      code = "788415003"
+      display = "Transplant medicine"
     }
   }
 
