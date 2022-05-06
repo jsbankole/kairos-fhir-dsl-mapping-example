@@ -48,7 +48,7 @@ condition {
 
   meta {
     source = "https://fhir.centraxx.de"
-    profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/cardiovascular-diseases"
+    profile "https://www.netzwerk-universitaetsmedizin.de/fhir/StructureDefinition/organ-recipient"
   }
 
   // Organ Transplant confirmed Absense
