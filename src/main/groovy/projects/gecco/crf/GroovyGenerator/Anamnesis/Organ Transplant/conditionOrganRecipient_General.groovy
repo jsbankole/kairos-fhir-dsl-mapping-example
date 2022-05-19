@@ -60,7 +60,7 @@ condition {
       }
       coding {
         system = "http://snomed.info/sct"
-        code = matchResponseToVerificationStatusHL7("COV_NEIN")
+        code = matchResponseToVerificationStatus("COV_NEIN")
         display = "Definitely NOT present (qualifier value)"
       }
     }
