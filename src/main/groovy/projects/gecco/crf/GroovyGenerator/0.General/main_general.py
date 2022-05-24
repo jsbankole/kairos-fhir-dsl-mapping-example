@@ -2,7 +2,7 @@ import os
 import shutil
 import subprocess
 
-keyword = "General"
+keyword = "0.General"
 
 src = f"./GroovyGenerator/{keyword}/Constant"
 dest = f"./GroovyGenerator/{keyword}/Final"
