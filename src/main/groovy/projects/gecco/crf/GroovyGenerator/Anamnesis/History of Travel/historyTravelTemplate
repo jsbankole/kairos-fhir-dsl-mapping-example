@@ -50,12 +50,56 @@ observation {
 
   final def iter = ##iter##
 
+  if(crfItemTravelValue != "COV_JA" && iter != 0) {
+  	return
+  }
+
+  String startDate = null
+  String endDate = null
+  String country = null
+  String countryCode = null
+  String state = null
+  String city = null
+
   // If there is no line do not generate file
   if(crfItemTravelValue == "COV_JA") {
     final def crfItemStartDate = context.source[studyVisitItem().crf().items()].findAll {
       iter == it[CrfItem.VALUE_INDEX] as int && "COV_GECCO_REISE_STARTDATUM" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
+    }[CrfItem.DATE_VALUE]
+    if(crfItemStartDate){
+      startDate = normalizeDate(crfItemStartDate[PrecisionDate.DATE][0] as String)
     }
-    if (!crfItemStartDate) {
+
+    final def crfItemEndDate = context.source[studyVisitItem().crf().items()].findAll {
+      iter == it[CrfItem.VALUE_INDEX] as int && "COV_GECCO_REISE_ENDDATUM" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
+    }[CrfItem.DATE_VALUE]
+    if(crfItemEndDate){
+      endDate = normalizeDate(crfItemEndDate[PrecisionDate.DATE][0] as String)
+    }
+
+    final def crfItemCountry = context.source[studyVisitItem().crf().items()].findAll {
+      iter == it[CrfItem.VALUE_INDEX] as int && "COV_GECCO_REISE_LAND" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
+    }[CrfItem.CATALOG_ENTRY_VALUE][0][0]
+    if(crfItemCountry){
+      country = crfItemCountry[CatalogEntry.NAME_MULTILINGUAL_ENTRIES][MultilingualEntry.VALUE][0]
+      countryCode = (crfItemCountry[CatalogEntry.CODE] as String).split("_")[-1]
+    }
+
+    final def crfItemState = context.source[studyVisitItem().crf().items()].findAll {
+      iter == it[CrfItem.VALUE_INDEX] as int && "COV_GECCO_REISE_BUNDESLAND" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
+    }[CrfItem.STRING_VALUE]
+    if(crfItemState){
+      state = crfItemState[0]
+    }
+
+    final def crfItemCity = context.source[studyVisitItem().crf().items()].findAll {
+      iter == it[CrfItem.VALUE_INDEX] as int && "COV_GECCO_REISE_STADT" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
+    }[CrfItem.STRING_VALUE]
+    if(crfItemCity){
+      city = crfItemCity[0]
+    }
+
+    if (!startDate && !endDate && !country && !state && !city) {
       return
     }
   }
@@ -124,62 +168,38 @@ observation {
 
   if(crfItemTravelValue == "COV_JA"){
 
-    final def crfItemStartDate = context.source[studyVisitItem().crf().items()].findAll {
-      iter == it[CrfItem.VALUE_INDEX] as int && "COV_GECCO_REISE_STARTDATUM" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
-    }
-
-    final def crfItemEndDate = context.source[studyVisitItem().crf().items()].findAll {
-      iter == it[CrfItem.VALUE_INDEX] as int && "COV_GECCO_REISE_ENDDATUM" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
-    }
-
-    final def crfItemCountry = context.source[studyVisitItem().crf().items()].findAll {
-      iter == it[CrfItem.VALUE_INDEX] as int && "COV_GECCO_REISE_LAND" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
-    }
-
-    final def crfItemState = context.source[studyVisitItem().crf().items()].findAll {
-      iter == it[CrfItem.VALUE_INDEX] as int && "COV_GECCO_REISE_BUNDESLAND" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
-    }
-
-    final def crfItemCity = context.source[studyVisitItem().crf().items()].findAll {
-      iter == it[CrfItem.VALUE_INDEX] as int && "COV_GECCO_REISE_STADT" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
-    }
-
-    final def startDate = normalizeDate(crfItemStartDate[CrfItem.DATE_VALUE][PrecisionDate.DATE][0] as String)
-    final def endDate = normalizeDate(crfItemEndDate[CrfItem.DATE_VALUE][PrecisionDate.DATE][0] as String)
-    final def country = crfItemCountry[CrfItem.CATALOG_ENTRY_VALUE][0][0][CatalogEntry.NAME_MULTILINGUAL_ENTRIES][MultilingualEntry.VALUE][1]
-    final def countryCode = (crfItemCountry[CrfItem.CATALOG_ENTRY_VALUE][0][0][CatalogEntry.CODE] as String).split("_")[-1]
-    final def state = crfItemState[CrfItem.STRING_VALUE][0]
-    final def city = crfItemCity[CrfItem.STRING_VALUE][0]
-
-    component {
-      code {
-        coding  {
-          system = "http://loinc.org"
-          code = "82752-7"
-          display = "Date travel started"
+    if(startDate){
+      component {
+        code {
+          coding  {
+            system = "http://loinc.org"
+            code = "82752-7"
+            display = "Date travel started"
+          }
+          text = "Travel start date"
         }
-        text = "Travel start date"
+        valueDateTime = startDate
       }
-      valueDateTime = startDate
     }
 
-    component {
-      code {
-        coding {
-          system = "http://loinc.org"
-          code = "94651-7"
-          display = "Country of travel"
+    if(country){
+      component {
+        code {
+          coding {
+            system = "http://loinc.org"
+            code = "94651-7"
+            display = "Country of travel"
+          }
+          text = "Country of travel"
         }
-
-        text = "Country of travel"
-      }
-      valueCodeableConcept {
-        coding {
-          system = "urn:iso:std:iso:3166"
-          code = countryCode
-          display = country
+        valueCodeableConcept {
+          coding {
+            system = "urn:iso:std:iso:3166"
+            code = countryCode
+            display = country
+          }
+          text = country
         }
-        text = country
       }
     }
 
@@ -202,29 +222,32 @@ observation {
       }
     }
 
-    component {
-      code {
-        coding {
-          system = "http://loinc.org"
-          code = "94653-3"
-          display = "City of travel"
+    if(city){
+      component {
+        code {
+          coding {
+            system = "http://loinc.org"
+            code = "94653-3"
+            display = "City of travel"
+          }
+          text = "City of travel"
         }
-        text = "City of travel"
+        valueString = new StringType(city as String)
       }
-      valueString = new StringType(city as String)
     }
 
-    component {
-      code {
-        coding {
-          system = "http://loinc.org"
-          code = "91560-3"
-          display = "Date of departure from travel destination"
+    if(endDate){
+      component {
+        code {
+          coding {
+            system = "http://loinc.org"
+            code = "91560-3"
+            display = "Date of departure from travel destination"
+          }
+          text = "Travel end date"
         }
-
-        text = "Travel end date"
+        valueDateTime = endDate
       }
-      valueDateTime = endDate
     }
   }
 }
