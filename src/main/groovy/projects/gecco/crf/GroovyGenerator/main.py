@@ -33,7 +33,13 @@ for folder in os.listdir(src):
         continue
 
     # Generate respective files based on main_*.py
-    py_file = [filename for filename in os.listdir(folder_path) if filename.endswith(".py")][0]
+    py_file = [filename for filename in os.listdir(folder_path) if filename.endswith(".py")]
+
+    # Skip unwanted folders (without python files)
+    if py_file:
+        py_file = py_file[0]
+    else:
+        continue
 
     subprocess.run(['python', f"{folder_path}/{py_file}"])
 
