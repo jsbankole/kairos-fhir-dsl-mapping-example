@@ -101,7 +101,7 @@ condition {
       }
     }
     recordedDate {
-      date = normalizeDate(crfItemUlcer[CrfItem.CREATIONDATE] as String)
+      date = normalizeDate(context.source[studyVisitItem().lastApprovedOn()] as String)
       precision = TemporalPrecisionEnum.DAY.toString()
     }
   }

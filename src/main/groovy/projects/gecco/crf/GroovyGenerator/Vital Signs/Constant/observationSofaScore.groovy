@@ -84,11 +84,10 @@ observation {
   }
 
   effectiveDateTime {
-    value = labVal[CrfItem.NUMERIC_VALUE]
+    date = normalizeDate(context.source[studyVisitItem().lastApprovedOn()] as String)
     precision = TemporalPrecisionEnum.DAY.toString()
   }
 
-  valueInteger(labVal[LaborFindingLaborValue.NUMERIC_VALUE].toString().substring(0,1).toInteger())
 }
 
 static String normalizeDate(final String dateTimeString) {

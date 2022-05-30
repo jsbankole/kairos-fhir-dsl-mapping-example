@@ -69,7 +69,7 @@ immunization {
   }
 
   occurrenceDateTime {
-    date = normalizeDate(crfItemImpfDatum[CrfItem.DATE_VALUE][PrecisionDate.DATE][0] as String)
+    date = normalizeDate(context.source[studyVisitItem().lastApprovedOn()] as String)
   }
 
   protocolApplied {

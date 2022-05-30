@@ -80,7 +80,7 @@ procedure {
 
   performedDateTime {
     if(fields[4] == "in-progress"){
-      date = normalizeDate(context.source[studyVisitItem().crf().creationDate()] as String)
+      date = normalizeDate(context.source[studyVisitItem().lastApprovedOn()] as String)
       precision = TemporalPrecisionEnum.DAY.toString()
     }
     else if(fields[4] == "not-done"){

@@ -110,7 +110,7 @@ observation {
   for (labVal in [labValPaO2, labValPaCO2, labValFiO2, labValOxySat, labVal_pH]) {
     if(labVal){
       effectiveDateTime {
-        date = normalizeDate(labVal[CrfItem.CREATIONDATE] as String)
+        date = normalizeDate(context.source[studyVisitItem().lastApprovedOn()] as String)
         precision = TemporalPrecisionEnum.DAY.toString()
       }
       break

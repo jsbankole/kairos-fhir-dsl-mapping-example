@@ -57,7 +57,7 @@ observation {
     }
 
     effectiveDateTime {
-      date = normalizeDate(context.source[studyVisitItem().crf().creationDate()] as String)
+      date = normalizeDate(context.source[studyVisitItem().lastApprovedOn()] as String)
       precision = TemporalPrecisionEnum.DAY.toString()
     }
 
