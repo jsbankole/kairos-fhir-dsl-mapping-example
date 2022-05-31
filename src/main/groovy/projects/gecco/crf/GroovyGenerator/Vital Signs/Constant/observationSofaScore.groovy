@@ -88,6 +88,7 @@ observation {
     precision = TemporalPrecisionEnum.DAY.toString()
   }
 
+  valueInteger(labVal[CrfItem.NUMERIC_VALUE] as Integer)
 }
 
 static String normalizeDate(final String dateTimeString) {
