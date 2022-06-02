@@ -133,8 +133,6 @@ consent {
       }
     }
   }
-
-
 }
 
 static String validUntilInterpreter(String validFromDate){

@@ -73,8 +73,7 @@ medicationStatement {
   }
 
   effectiveDateTime {
-    date = normalizeDate(context.source[studyVisitItem().lastApprovedOn()] as String)
-    precision = TemporalPrecisionEnum.SECOND.toString()
+    date = normalizeDateTime(context.source[studyVisitItem().lastApprovedOn()] as String)
   }
 
   reasonCode{
@@ -92,7 +91,8 @@ medicationStatement {
   }
 }
 
-static String normalizeDate(final String dateTimeString) {
+
+static String normalizeDateTime(final String dateTimeString) {
   return dateTimeString != null ? dateTimeString.substring(0, 19) : null
 }
 

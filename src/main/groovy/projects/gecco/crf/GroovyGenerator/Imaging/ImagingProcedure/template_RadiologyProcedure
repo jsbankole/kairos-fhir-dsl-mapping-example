@@ -82,6 +82,7 @@ procedure {
     date = normalizeDate(context.source[studyVisitItem().lastApprovedOn()] as String)
     precision = TemporalPrecisionEnum.DAY.toString()
   }
+
   bodySite {
     coding {
       system = "http://snomed.info/sct"
@@ -92,6 +93,5 @@ procedure {
 }
 
 static String normalizeDate(final String dateTimeString) {
-  return dateTimeString != null ? dateTimeString.substring(0, 19) : null
+  return dateTimeString != null ? dateTimeString.substring(0, 10) : null
 }
-

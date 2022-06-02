@@ -85,6 +85,7 @@ condition {
   }
 }
 
+
 static String matchResponseToVerStat(final String resp) {
   switch (resp) {
     case ("COV_BEATMET_JA"):

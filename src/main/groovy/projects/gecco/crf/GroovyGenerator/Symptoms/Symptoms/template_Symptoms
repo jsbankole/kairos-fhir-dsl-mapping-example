@@ -120,6 +120,7 @@ condition {
   }
 }
 
+
 static String matchResponseToVerificationStatus(final String resp) {
   switch (resp) {
     case null:

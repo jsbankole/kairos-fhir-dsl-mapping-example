@@ -153,6 +153,7 @@ static String matchResponseToVerificationStatus(final String resp) {
     default: "410605003"
   }
 }
+
 static String matchResponseToVerificationStatusHL7(final String resp) {
   switch (resp) {
     case null:

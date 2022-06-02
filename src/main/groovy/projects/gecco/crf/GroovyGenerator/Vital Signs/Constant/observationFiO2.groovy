@@ -93,8 +93,7 @@ observation {
   }
 
   effectiveDateTime {
-    date = normalizeDate(context.source[studyVisitItem().lastApprovedOn()] as String)
-    precision = TemporalPrecisionEnum.DAY.toString()
+    date = normalizeDateTime(context.source[studyVisitItem().lastApprovedOn()] as String)
   }
 
   valueQuantity {
@@ -105,6 +104,7 @@ observation {
   }
 }
 
-static String normalizeDate(final String dateTimeString) {
+
+static String normalizeDateTime(final String dateTimeString) {
   return dateTimeString != null ? dateTimeString.substring(0, 19) : null
 }

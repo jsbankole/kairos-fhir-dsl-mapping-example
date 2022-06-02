@@ -1,5 +1,6 @@
 package projects.gecco.crf
 
+import ca.uhn.fhir.model.api.TemporalPrecisionEnum
 import de.kairos.fhir.centraxx.metamodel.CatalogEntry
 import de.kairos.fhir.centraxx.metamodel.CrfItem
 import de.kairos.fhir.centraxx.metamodel.CrfTemplateField
@@ -60,7 +61,7 @@ consent {
       reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
     }
 
-    dateTime = getCurrentDate()
+    dateTime = normalizeDate(context.source[studyVisitItem().lastApprovedOn()] as String) as DateTimeType
 
     policy{
       uri = "https://www.aerzteblatt.de/archiv/65440/DNR-Anordnungen-Das-fehlende-Bindeglied"
@@ -99,9 +100,13 @@ static String[] mapDNR(final String resp) {
   }
 }
 
-static DateTimeType getCurrentDate(){
-  def calendar = Calendar.getInstance()
-  return new DateTimeType("" + calendar.get(Calendar.YEAR) + "-" +
-          String.format("%02d", (calendar.get(Calendar.MONTH) + 1)) + "-" +
-          String.format("%02d", (calendar.get(Calendar.DAY_OF_MONTH))))
+//static DateTimeType getCurrentDate(){
+//  def calendar = Calendar.getInstance()
+//  return new DateTimeType("" + calendar.get(Calendar.YEAR) + "-" +
+//          String.format("%02d", (calendar.get(Calendar.MONTH) + 1)) + "-" +
+//          String.format("%02d", (calendar.get(Calendar.DAY_OF_MONTH))))
+//}
+
+static String normalizeDate(final String dateTimeString) {
+  return dateTimeString != null ? dateTimeString.substring(0, 10) : null
 }

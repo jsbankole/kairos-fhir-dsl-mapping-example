@@ -85,8 +85,7 @@ observation {
   }
 
   effectiveDateTime {
-    date = normalizeDate(context.source[studyVisitItem().lastApprovedOn()] as String)
-    precision = TemporalPrecisionEnum.DAY.toString()
+    date = normalizeDateTime(context.source[studyVisitItem().lastApprovedOn()] as String)
   }
 
   subject {
@@ -107,6 +106,7 @@ observation {
   }
 }
 
+
 static String[] mapDiscSNOMED(final String discharge) {
   switch (discharge) {
     default:
@@ -117,6 +117,6 @@ static String[] mapDiscSNOMED(final String discharge) {
       return ["260415000", " Not detected (qualifier value)", "SARS-CoV-2-RNA negativ"]
   }
 }
-static String normalizeDate(final String dateTimeString) {
+static String normalizeDateTime(final String dateTimeString) {
   return dateTimeString != null ? dateTimeString.substring(0, 19) : null
 }

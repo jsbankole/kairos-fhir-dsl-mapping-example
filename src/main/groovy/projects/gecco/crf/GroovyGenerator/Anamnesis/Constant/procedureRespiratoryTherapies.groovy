@@ -54,6 +54,7 @@ procedure {
           performedDateTime {
             if(crfItemRespTheraDate && crfItemRespTheraDate[CrfItem.DATE_VALUE]){
               date = crfItemRespTheraDate[CrfItem.DATE_VALUE].toString().substring(6, 16)
+
             }else{
               extension {
                 url = "http://hl7.org/fhir/StructureDefinition/data-absent-reason"
