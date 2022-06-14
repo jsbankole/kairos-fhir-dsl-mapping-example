@@ -50,7 +50,7 @@ observation {
 
   final def iter = ##iter##
 
-  if(crfItemTravelValue != "COV_JA" && iter != 0) {
+  if( !(crfItemTravelValue == "COV_JA" || iter == 0)) {
   	return
   }
 
@@ -63,13 +63,23 @@ observation {
 
   // If there is no line do not generate file
   if(crfItemTravelValue == "COV_JA") {
-    final def crfItemStartDate = context.source[studyVisitItem().crf().items()].findAll {
-      iter == it[CrfItem.VALUE_INDEX] as int && "COV_GECCO_REISE_STARTDATUM" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
-    }[CrfItem.DATE_VALUE]
+
+    final def crfItemStartDate_line = context.source[studyVisitItem().crf().items()].findAll {
+          iter == it[CrfItem.VALUE_INDEX] as int && "COV_GECCO_REISE_STARTDATUM" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
+        }
+
+    // No line
+    if(!crfItemStartDate_line){
+      return
+    }
+
+    // Start date
+    final def crfItemStartDate = crfItemStartDate_line[CrfItem.DATE_VALUE]
     if(crfItemStartDate){
       startDate = normalizeDate(crfItemStartDate[PrecisionDate.DATE][0] as String)
     }
 
+    // End Date
     final def crfItemEndDate = context.source[studyVisitItem().crf().items()].findAll {
       iter == it[CrfItem.VALUE_INDEX] as int && "COV_GECCO_REISE_ENDDATUM" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
     }[CrfItem.DATE_VALUE]
@@ -77,6 +87,7 @@ observation {
       endDate = normalizeDate(crfItemEndDate[PrecisionDate.DATE][0] as String)
     }
 
+    // Country
     final def crfItemCountry = context.source[studyVisitItem().crf().items()].findAll {
       iter == it[CrfItem.VALUE_INDEX] as int && "COV_GECCO_REISE_LAND" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
     }[CrfItem.CATALOG_ENTRY_VALUE][0][0]
@@ -85,6 +96,7 @@ observation {
       countryCode = (crfItemCountry[CatalogEntry.CODE] as String).split("_")[-1]
     }
 
+    //  State
     final def crfItemState = context.source[studyVisitItem().crf().items()].findAll {
       iter == it[CrfItem.VALUE_INDEX] as int && "COV_GECCO_REISE_BUNDESLAND" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
     }[CrfItem.STRING_VALUE]
@@ -92,6 +104,7 @@ observation {
       state = crfItemState[0]
     }
 
+    // City
     final def crfItemCity = context.source[studyVisitItem().crf().items()].findAll {
       iter == it[CrfItem.VALUE_INDEX] as int && "COV_GECCO_REISE_STADT" == it[CrfItem.TEMPLATE]?.getAt(CrfTemplateField.LABOR_VALUE)?.getAt(LaborValue.CODE)
     }[CrfItem.STRING_VALUE]

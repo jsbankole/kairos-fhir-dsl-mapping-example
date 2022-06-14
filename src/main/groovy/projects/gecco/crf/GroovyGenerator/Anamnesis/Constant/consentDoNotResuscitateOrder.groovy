@@ -61,7 +61,7 @@ consent {
       reference = "Patient/Patient-" + context.source[studyVisitItem().studyMember().patientContainer().idContainer()]?.find {"MPI" == it["idContainerType"]?.getAt("code")}["psn"]
     }
 
-    dateTime = normalizeDate(context.source[studyVisitItem().lastApprovedOn()] as String) as DateTimeType
+    dateTime = new DateTimeType(normalizeDate(context.source[studyVisitItem().lastApprovedOn()] as String))
 
     policy{
       uri = "https://www.aerzteblatt.de/archiv/65440/DNR-Anordnungen-Das-fehlende-Bindeglied"
